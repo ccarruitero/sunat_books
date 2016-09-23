@@ -1,0 +1,52 @@
+headers:
+- correlative
+- operation_date
+- pay_date
+- document:
+  - doc_type
+  - document_serial
+  - year_emition
+  - document_number
+- supplier:
+  - supplier_document_type
+  - supplier_document_number
+  - supplier_name
+- taxable_to_taxable_export:
+  - taxable_to_taxable_export_bi
+  - taxable_to_taxable_export_igv
+- taxable_to_taxable_export_non_taxable:
+  - taxable_to_taxable_export_non_taxable_bi
+  - taxable_to_taxable_export_non_taxable_igv
+- taxable_to_non_taxable:
+  - taxable_to_non_taxable_bi
+  - taxable_to_non_taxable_igv
+- non_taxable
+- isc
+- other_taxs
+- total_operation_buys
+- foreign_pay_document_number
+- detraction:
+  - detraction_number
+  - detraction_date
+- exchange_rate
+- debit_original_document:
+  - debit_original_document_date
+  - debit_original_document_type
+  - debit_original_document_serial
+  - debit_original_document_number
+widths:
+- document:
+  - [20, 20, 20 ,41]
+- supplier:
+  - [15, 40, 56]
+- taxable_to_taxable_export:
+  - [32, 32]
+- taxable_to_taxable_export_non_taxable:
+  - [25, 25]
+- taxable_to_non_taxable:
+  - [25, 25]
+- detraction:
+  - [20, 25]
+align:
+- taxable_to_taxable_export:
+  - right

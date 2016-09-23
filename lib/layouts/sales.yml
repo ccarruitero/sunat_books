@@ -1,0 +1,36 @@
+headers:
+- correlative
+- operation_date
+- pay_date
+- document:
+  - doc_type
+  - document_serial
+  - document_number
+- client:
+  - client_document_type
+  - client_document_number
+  - client_name
+- export_value
+- taxable_bi
+- sale_non_taxable:
+  - exo
+  - inaf
+- isc
+- igv
+- other_taxs
+- total_operation_sales
+- exchange_rate
+- credit_origina_document:
+  - credit_original_document_date
+  - credit_original_document_type
+  - credit_original_document_serial
+  - credit_original_document_number
+widths:
+- document:
+  - [20, 20, 40]
+- client:
+  - [15, 40, 55]
+- sale_non_taxable:
+  - [22, 22]
+- credit_origina_document:
+  - [22, 22, 22, 22]
