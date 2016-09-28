@@ -73,5 +73,65 @@ module Books
     def zero
       formated_number(0)
     end
+
+    def table_head fields, book_name, layout
+      thead = []
+      fields.each do |h|
+        if h.class == Hash
+          r = sub_head(h, book_name, layout)
+          thead << r
+        else
+          thead << I18n.t("books.#{book_name}.#{h}").upcase
+        end
+      end
+      thead
+    end
+
+    def table_body fields, ticket, widths, aligns
+      tbody = []
+      fields.each do |f|
+        if f.class == Hash
+          f.each do |key, value|
+            v = value.collect do |s|
+              begin
+                value = ticket.send(s)
+                value = formated_number(value) if value.class == BigDecimal
+              rescue
+                value = ""
+              end
+              value
+            end
+            options = {cell_style: {borders: [], size: 5}}
+            column_widths = nil
+            if !widths.nil?
+              widths.each do |w|
+                if w[key] != nil
+                  column_widths = w[key].flatten
+                end
+              end
+            end
+            if column_widths != nil
+              options = options.merge({column_widths: column_widths})
+            else
+              options[:cell_style] = options[:cell_style].merge({width: 28})
+            end
+            if !aligns.nil?
+              add_align(aligns, options, key)
+            end
+            arr = make_table( [v], options)
+            tbody << arr
+          end
+        else
+          begin
+            value = ticket.send(f)
+          rescue
+            value = ""
+          end
+          value = formated_number(value) if value.class == BigDecimal
+          tbody << value
+        end
+      end
+      tbody
+    end
   end
 end

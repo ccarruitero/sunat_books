@@ -78,16 +78,8 @@ module Books
       fields = @blayout["headers"]
       widths = @blayout["widths"]
       aligns = @blayout["align"]
-      thead = []
-      fields.each do |h|
-        if h.class == Hash
-          r = sub_head(h, @book_name, @blayout)
-          thead << r
-        else
-          thead << I18n.t("books.#{@book_name}.#{h}").upcase
-        end
-      end
-      data = [thead]
+      data = []
+      data << table_head(fields, @book_name, @blayout)
 
       n = 1
       bi_sum = BigDecimal(0)
@@ -98,46 +90,7 @@ module Books
 
       if length > 0
         @tickets.each do |ticket|
-          tbody = []
-          fields.each do |f|
-            if f.class == Hash
-              f.each do |key, value|
-                v = value.collect do |s|
-                  begin
-                    value = ticket.send(s)
-                    value = formated_number(value) if value.class == BigDecimal
-                  rescue
-                    value = ""
-                  end
-                  value
-                end
-                options = {cell_style: {borders: [], size: 5}}
-                column_widths = nil
-                widths.each do |w|
-                  if w[key] != nil
-                    column_widths = w[key].flatten
-                  end
-                end
-                if column_widths != nil
-                  options = options.merge({column_widths: column_widths})
-                else
-                  options[:cell_style] = options[:cell_style].merge({width: 28})
-                end
-                add_align(aligns, options, key)
-                arr = make_table( [v], options)
-                tbody << arr
-              end
-            else
-              begin
-                value = ticket.send(f)
-              rescue
-                value = ""
-              end
-              value = formated_number(value) if value.class == BigDecimal
-              tbody << value
-            end
-          end
-          data << tbody
+          data << table_body(fields, ticket, widths, aligns)
 
           if @pages[n][:length] < 25
             page = @pages[n]
@@ -168,8 +121,8 @@ module Books
       end
 
       table(data, header: true, cell_style: {borders: [], size: 5, align: :right},
-            column_widths: {0 => 22, 1 => 35, 2 => 30, 8 => 30, 10 => 30, 9 => 22,
-                            11 => 33, 12 => 33})
+            column_widths: {0 => 22, 1 => 35, 2 => 30, 8 => 30, 10 => 30,
+                            9 => 22, 11 => 33, 12 => 33})
     end
   end
 end
