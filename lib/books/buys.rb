@@ -95,65 +95,76 @@ module Books
       total_sum = BigDecimal(0)
       non_taxable = BigDecimal(0)
 
-      @tickets.each do |ticket|
-        tbody = []
-        fields.each do |f|
-          if f.class == Hash
-            f.each do |key, value|
-              v = value.collect do |s|
-                begin
-                  value = ticket.send(s)
-                  value = formated_number(value) if value.class == BigDecimal
-                rescue
-                  value = ""
+
+      if length > 0
+        @tickets.each do |ticket|
+          tbody = []
+          fields.each do |f|
+            if f.class == Hash
+              f.each do |key, value|
+                v = value.collect do |s|
+                  begin
+                    value = ticket.send(s)
+                    value = formated_number(value) if value.class == BigDecimal
+                  rescue
+                    value = ""
+                  end
+                  value
                 end
-                value
-              end
-              options = {cell_style: {borders: [], size: 5}}
-              column_widths = nil
-              widths.each do |w|
-                if w[key] != nil
-                  column_widths = w[key].flatten
+                options = {cell_style: {borders: [], size: 5}}
+                column_widths = nil
+                widths.each do |w|
+                  if w[key] != nil
+                    column_widths = w[key].flatten
+                  end
                 end
+                if column_widths != nil
+                  options = options.merge({column_widths: column_widths})
+                else
+                  options[:cell_style] = options[:cell_style].merge({width: 28})
+                end
+                add_align(aligns, options, key)
+                arr = make_table( [v], options)
+                tbody << arr
               end
-              if column_widths != nil
-                options = options.merge({column_widths: column_widths})
-              else
-                options[:cell_style] = options[:cell_style].merge({width: 28})
+            else
+              begin
+                value = ticket.send(f)
+              rescue
+                value = ""
               end
-              add_align(aligns, options, key)
-              arr = make_table( [v], options)
-              tbody << arr
+              value = formated_number(value) if value.class == BigDecimal
+              tbody << value
             end
-          else
-            begin
-              value = ticket.send(f)
-            rescue
-              value = ""
-            end
-            value = formated_number(value) if value.class == BigDecimal
-            tbody << value
           end
-        end
-        data << tbody
+          data << tbody
 
-        if @pages[n][:length] < 25
-          page = @pages[n]
-          page[:length] += 1
-        else
-          page = @pages[n + 1]
-          n += 1
-          page[:length] += 1
-        end
+          if @pages[n][:length] < 25
+            page = @pages[n]
+            page[:length] += 1
+          else
+            page = @pages[n + 1]
+            n += 1
+            page[:length] += 1
+          end
 
-        bi_sum += ticket.taxable_to_taxable_export_bi
-        igv_sum += ticket.taxable_to_taxable_export_igv
-        total_sum += ticket.total_operation_buys
-        non_taxable += ticket.non_taxable unless ticket.non_taxable.nil?
-        page[:bi_sum] = bi_sum.round(2)
-        page[:igv_sum] = igv_sum.round(2)
-        page[:total_sum] = total_sum.round(2)
-        page[:non_taxable] = non_taxable.round(2)
+          bi_sum += ticket.taxable_to_taxable_export_bi
+          igv_sum += ticket.taxable_to_taxable_export_igv
+          total_sum += ticket.total_operation_buys
+          non_taxable += ticket.non_taxable unless ticket.non_taxable.nil?
+          page[:bi_sum] = bi_sum.round(2)
+          page[:igv_sum] = igv_sum.round(2)
+          page[:total_sum] = total_sum.round(2)
+          page[:non_taxable] = non_taxable.round(2)
+        end
+      else
+        data << [content: 'SIN MOVIMIENTO EN EL PERIODO', colspan: 5]
+        @pages[n] = {}
+        page = @pages[n]
+        page[:bi_sum] = zero
+        page[:igv_sum] = zero
+        page[:total_sum] = zero
+        page[:non_taxable] = zero
       end
 
       table(data, header: true, cell_style: {borders: [], size: 5, align: :right},
