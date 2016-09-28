@@ -9,4 +9,8 @@ Gem::Specification.new do |s|
   s.license = "MPL"
 
   s.files = `git ls-files`.split("\n")
+
+  s.add_runtime_dependency "prawn"
+  s.add_runtime_dependency "i18n"
+  s.add_runtime_dependency "activesupport"
 end
