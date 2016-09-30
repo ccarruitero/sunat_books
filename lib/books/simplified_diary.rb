@@ -31,40 +31,47 @@ module Books
       # header
       counts = get_counts @tickets
       data << ['FECHA', 'OPERACIÓN', counts].flatten
+      total_sums = counts.map { |count| CountSum.new(count) }
 
       # body
 
       # initial entry
       initial = @tickets.where(operation_type: 'inicial')
-      initial_row = get_row_sums(initial, counts)
+      initial_row = get_row_sums(initial, counts, total_sums)
       data << [Date.new(year.to_i, month.to_i, 1).to_s, 'ASIENTO INICIAL DEL PERIODO', initial_row].flatten
 
       # sales entry
       sales = @tickets.where(operation_type: 'ventas')
-      sales_row = get_row_sums(sales, counts)
+      sales_row = get_row_sums(sales, counts, total_sums)
       data << [Date.new(year.to_i, month.to_i + 1, 1).prev_day.to_s, 'VENTAS DEL PERIODO', sales_row].flatten
 
       # buys entry
       buys = @tickets.where(operation_type: 'compras')
-      buys_row = get_row_sums(buys, counts)
+      buys_row = get_row_sums(buys, counts, total_sums)
       data << [Date.new(year.to_i, month.to_i + 1, 1).prev_day.to_s, 'COMPRAS DEL PERIODO', buys_row].flatten
 
       # other entries
       others = @tickets.where(operation_type: 'otros')
       others.each do |ticket|
         ticket_data = []
-        counts.each do |count|
+        counts.each_with_index do |count, i|
           if uniq_counts(ticket).include? count
             value = ticket.get_amount count
           else
-            value = zero
+            value = 0
           end
+          total_sums[i].add value
           ticket_data << { content: formated_number(value), align: :right }
         end
         data << [ticket.operation.date, ticket.reference, ticket_data].flatten
       end
 
       # totals
+      total_data = []
+      total_sums.map do |sum|
+        total_data << { content: formated_number(sum.total), align: :right }
+      end
+      data << [{content: 'TOTALES', colspan: 2}, total_data].flatten
 
       table(data, header: true, cell_style: {borders: [], size: 5})
     end

@@ -144,7 +144,15 @@ module Books
       arr = arr.flatten.uniq.sort
     end
 
-    def get_row_sums tickets, counts
+    def get_value ticket, count
+      amount = ticket.get_amount(count)
+      if count === '401' && ticket.operation_type == 'compras'
+        amount = amount * (-1)
+      end
+      amount
+    end
+
+    def get_row_sums tickets, counts, total_sums
       # given an array of counts and tickets get sums by each count
       row_counts = get_counts tickets
       count_sums = row_counts.map { |count| CountSum.new(count) }
@@ -152,13 +160,13 @@ module Books
       # get totals
       tickets.each do |ticket|
         count_sums.each do |count_sum|
-          count_sum.add ticket.get_amount(count_sum.count)
+          count_sum.add get_value(ticket, count_sum.count)
         end
       end
 
       # get ordered row
       row_data = []
-      counts.each do |count|
+      counts.each_with_index do |count, i|
         sum_count = nil
         count_sums.each do |count_sum|
           sum_count = count_sum if count_sum.count == count
@@ -167,8 +175,9 @@ module Books
         if sum_count
           value = sum_count.total
         else
-          value = zero
+          value = 0
         end
+        total_sums[i].add value
         row_data << { content: formated_number(value), align: :right }
       end
       row_data
