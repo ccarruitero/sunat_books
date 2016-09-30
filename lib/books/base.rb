@@ -133,5 +133,45 @@ module Books
       end
       tbody
     end
+
+    # diary
+    def uniq_counts ticket
+      ticket.accounting_counts.pluck(:accounting_count_number).uniq
+    end
+
+    def get_counts tickets
+      arr = tickets.map { |t| uniq_counts(t) }
+      arr = arr.flatten.uniq.sort
+    end
+
+    def get_row_sums tickets, counts
+      # given an array of counts and tickets get sums by each count
+      row_counts = get_counts tickets
+      count_sums = row_counts.map { |count| CountSum.new(count) }
+
+      # get totals
+      tickets.each do |ticket|
+        count_sums.each do |count_sum|
+          count_sum.add ticket.get_amount(count_sum.count)
+        end
+      end
+
+      # get ordered row
+      row_data = []
+      counts.each do |count|
+        sum_count = nil
+        count_sums.each do |count_sum|
+          sum_count = count_sum if count_sum.count == count
+        end
+
+        if sum_count
+          value = sum_count.total
+        else
+          value = zero
+        end
+        row_data << { content: formated_number(value), align: :right }
+      end
+      row_data
+    end
   end
 end
