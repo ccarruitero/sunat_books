@@ -32,8 +32,8 @@ module Books
       current_key = nil
       column_widths = {}
       hash.each do |key, value|
-        k = I18n.t("books.#{book_name}.#{key}").upcase
-        v = value.collect { |s| I18n.t("books.#{book_name}.#{s}").upcase}
+        k = I18n.t("books.#{book_name}.#{key}").mb_chars.upcase.to_s
+        v = value.collect { |s| I18n.t("books.#{book_name}.#{s}").mb_chars.upcase.to_s}
         arr = [[{content: k, colspan: value.length}], v]
         current_key = key
       end
@@ -81,7 +81,7 @@ module Books
           r = sub_head(h, book_name, layout)
           thead << r
         else
-          thead << I18n.t("books.#{book_name}.#{h}").upcase
+          thead << I18n.t("books.#{book_name}.#{h}").mb_chars.upcase.to_s
         end
       end
       thead
