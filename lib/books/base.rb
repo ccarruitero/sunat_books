@@ -145,11 +145,12 @@ module Books
     end
 
     def get_value ticket, count
-      amount = ticket.get_amount(count)
-      if count === '401' && ticket.operation_type == 'compras'
-        amount = amount * (-1)
-      end
-      amount
+      active_amount = ticket.get_amount_by_position(count)
+      pasive_amount = ticket.get_amount_by_position(count, false)
+      # if count === '401' && ticket.operation_type == 'compras'
+      #   amount = amount * (-1)
+      # end
+      amount = active_amount - pasive_amount
     end
 
     def get_row_sums tickets, counts, total_sums
