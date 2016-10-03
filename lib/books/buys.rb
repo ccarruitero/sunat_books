@@ -107,7 +107,7 @@ module Books
       table(data, header: true, cell_style: {borders: [], size: 5, align: :right},
             column_widths: {0 => 22, 1 => 35, 2 => 30, 8 => 30, 10 => 30,
                             9 => 22, 11 => 33, 12 => 33}) do
-				row(0).borders = [:bottom]
+				row(0).borders = [:bottom, :top]
       end
     end
   end

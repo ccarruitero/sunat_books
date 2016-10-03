@@ -72,8 +72,8 @@ module Books
       #txt "APELLIDOS Y NOMBRES, DENOMINACIÓN O RAZÓN SOCIAL: #{name.upcase}"
       txt "#{name.upcase}"
       txt "RUC: #{ruc}"
-      book_title title
-      txt "#{period}"
+      book_title("#{title} - #{period}")
+      move_down 5
     end
 
     def zero

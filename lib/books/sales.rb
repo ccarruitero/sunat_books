@@ -12,24 +12,25 @@ module Books
       @book_name = self.class.name.downcase.sub("books::", "")
       dir = File.dirname(__FILE__)
       @blayout = YAML.load_file("#{dir}/layouts/#{@book_name}.yml")
+      @page_max = 29
 
       repeat(:all) do
         canvas do
           bounding_box([bounds.left + 10, bounds.top - 10], width: 800) do
-            book_title "REGISTRO DE VENTAS"
-            book_header @period, @company.ruc, @company.name
+            # book_title "REGISTRO DE VENTAS"
+            book_header @period, @company.ruc, @company.name, "REGISTRO DE VENTAS"
           end
         end
       end
 
-      bounding_box([bounds.left + 3, bounds.top - 45], width: 790, height: 510) do
+      bounding_box([bounds.left + 3, bounds.top - 45], width: 800, height: 530) do
         book_body
       end
 
       repeat(:all, dynamic: true) do
         canvas do
           bounding_box([235, 50], width: 700) do
-            book_footer
+            # book_footer
           end
         end
       end
@@ -61,16 +62,18 @@ module Books
 
       if length > 0
         @tickets.each do |ticket|
-          data << table_body(fields, ticket, widths, aligns)
 
           if @pages[n][:length] < 29
             page = @pages[n]
             page[:length] += 1
           else
+            data << final_row('VIENEN', @pages[n])
             page = @pages[n + 1]
             n += 1
             page[:length] += 1
           end
+
+          data << table_body(fields, ticket, widths, aligns)
 
           bi_sum += ticket.taxable_bi
           igv_sum += ticket.igv
@@ -78,6 +81,11 @@ module Books
           page[:bi_sum] = bi_sum.round(2)
           page[:igv_sum] = igv_sum.round(2)
           page[:total_sum] = total_sum.round(2)
+          if page[:length] == @page_max
+            data << final_row('VAN', page)
+          elsif @tickets.last == ticket
+            data << final_row('TOTAL', page)
+          end
         end
       else
         data << [content: 'SIN MOVIMIENTO EN EL PERIODO', colspan: 5]
@@ -88,33 +96,19 @@ module Books
         page[:total_sum] = zero
       end
 
-      table(data, header: true, cell_style: {borders: [], size: 5, align: :right},
-            column_widths: {0 => 22, 1 => 35, 2 => 30, 5 => 22, 6 => 35, 8 => 20,
-                            9 => 30, 10 => 20, 11 => 35, 12 => 29})
+      table(data, header: true, cell_style: { borders: [], size: 5,
+                                              align: :right },
+            column_widths: {0 => 22, 1 => 35, 2 => 30, 5 => 27, 6 => 37,
+                            8 => 20, 9 => 33, 10 => 27, 11 => 35, 12 => 29}) do
+				row(0).borders = [:bottom, :top]
+      end
     end
 
-    def book_footer
-      arr = []
-      if page_count == page_number
-        letter = "TOTAL"
-      else
-        letter = "VAN"
-      end
-
-      bi_sum= formated_number(@pages[page_number][:bi_sum].to_f)
-      igv_sum= formated_number(@pages[page_number][:igv_sum].to_f)
-      total_sum= formated_number(@pages[page_number][:total_sum].to_f)
-
-      if @pages[page_number - 1] != nil
-        letter1 = "VIENEN"
-        p = @pages[page_number - 1]
-        bi_sum1 = formated_number(p[:bi_sum].to_f)
-        igv_sum1 = formated_number(p[:igv_sum].to_f)
-        total_sum1 = formated_number(p[:total_sum].to_f)
-        arr << [letter1, zero, bi_sum1, zero, zero, zero, igv_sum1, zero, total_sum1]
-      end
-      arr << [letter, zero, bi_sum, zero, zero, zero, igv_sum, zero, total_sum]
-      table( arr, cell_style: {align: :right, borders: [], size: 5}, column_widths: [50, 22, 35, 22, 22, 20, 32 ,20, 35])
+    def final_row foot_line_text, page
+      [ {content: foot_line_text, colspan: 5}, zero,
+        formated_number(page[:bi_sum]), make_sub_table([zero, zero], 22), zero,
+        formated_number(page[:igv_sum]), zero,
+        formated_number(page[:total_sum])]
     end
   end
 end
