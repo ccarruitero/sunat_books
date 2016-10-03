@@ -38,7 +38,7 @@ widths:
 - document:
   - [20, 23, 23 ,41]
 - supplier:
-  - [15, 40, 56]
+  - [15, 40, 57]
 - taxable_to_taxable_export:
   - [32, 32]
 - taxable_to_taxable_export_non_taxable:

@@ -12,6 +12,7 @@ module Books
       @book_name = self.class.name.downcase.sub("books::", "")
       dir = File.dirname(__FILE__)
       @blayout = YAML.load_file("#{dir}/layouts/#{@book_name}.yml")
+
       repeat(:all) do
         canvas do
           bounding_box([bounds.left + 10, bounds.top - 10], width: 800) do
@@ -36,7 +37,7 @@ module Books
 
     def book_body
       length = @tickets.length
-      page_num = (length / 28.0).ceil
+      page_num = (length / 29.0).ceil
       page_num.times do |i|
         @pages[i + 1] = {
           page_number: i + 1,
@@ -62,7 +63,7 @@ module Books
         @tickets.each do |ticket|
           data << table_body(fields, ticket, widths, aligns)
 
-          if @pages[n][:length] < 28
+          if @pages[n][:length] < 29
             page = @pages[n]
             page[:length] += 1
           else
@@ -113,7 +114,7 @@ module Books
         arr << [letter1, zero, bi_sum1, zero, zero, zero, igv_sum1, zero, total_sum1]
       end
       arr << [letter, zero, bi_sum, zero, zero, zero, igv_sum, zero, total_sum]
-      table( arr, cell_style: {align: :right, borders: [], size: 5}, column_widths: [50, 22, 35, 22, 22, 20, 30 ,20, 35])
+      table( arr, cell_style: {align: :right, borders: [], size: 5}, column_widths: [50, 22, 35, 22, 22, 20, 32 ,20, 35])
     end
   end
 end

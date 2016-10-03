@@ -47,11 +47,13 @@ module Books
         end
       end
       if column_widths.size != 0
-        multihead = make_table( arr, cell_style: {borders: [], size: 5},
-                                column_widths: column_widths)
+        multihead = make_table( arr, cell_style: {borders: [], size: 5, align: :center},
+                      column_widths: column_widths) do
+                        cells.padding = 1
+                      end
       else
         multihead = make_table( arr,
-                                cell_style: {borders: [], size: 5, width: 22})
+                                cell_style: {borders: [], size: 5, width: 22, padding: 1, align: :center})
       end
     end
 
@@ -63,11 +65,15 @@ module Books
       text title, align: :center, size: 8
     end
 
-    def book_header period, ruc, name
+    def book_header period, ruc, name, title=nil
       move_down 5
-      txt "PERIODO: #{period}"
+      #txt "PERIODO: #{period}"
+      #txt "RUC: #{ruc}"
+      #txt "APELLIDOS Y NOMBRES, DENOMINACIÓN O RAZÓN SOCIAL: #{name.upcase}"
+      txt "#{name.upcase}"
       txt "RUC: #{ruc}"
-      txt "APELLIDOS Y NOMBRES, DENOMINACIÓN O RAZÓN SOCIAL: #{name.upcase}"
+      book_title title
+      txt "#{period}"
     end
 
     def zero
@@ -182,6 +188,13 @@ module Books
         row_data << { content: formated_number(value), align: :right }
       end
       row_data
+    end
+
+    def make_sub_table content, width=nil
+      options = {cell_style: {width: width, size: 5, borders: [], align: :right}}
+      content_row = []
+      content.each {|c| content_row << formated_number(c) }
+      make_table([content_row],options)
     end
   end
 end

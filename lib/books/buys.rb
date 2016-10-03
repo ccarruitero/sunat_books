@@ -14,58 +14,34 @@ module Books
       @book_name = self.class.name.downcase.sub("books::", "")
       dir = File.dirname(__FILE__)
       @blayout = YAML.load_file("#{dir}/layouts/#{@book_name}.yml")
+
       repeat(:all) do
         canvas do
           bounding_box([bounds.left + 10, bounds.top - 10], width: 800) do
-            book_title "REGISTRO DE COMPRAS"
-            book_header @period, @company.ruc, @company.name
+            book_header @period, @company.ruc, @company.name, "REGISTRO DE COMPRAS"
           end
         end
       end
 
-      bounding_box([bounds.left + 3, bounds.top - 45], width: 800, height: 510) do
+      bounding_box([bounds.left + 3, bounds.top - 45], width: 800, height: 530) do
         book_body
-      end
-
-      repeat(:all, dynamic: true) do
-        canvas do
-          bounding_box([280, 50], width: 800) do
-            book_footer
-          end
-        end
       end
     end
 
-    def book_footer
-      arr = []
-      if page_count == page_number
-        letter = "TOTAL"
-      else
-        letter = "VAN"
-      end
-
-      bi_sum= formated_number(@pages[page_number][:bi_sum].to_f)
-      igv_sum= formated_number(@pages[page_number][:igv_sum].to_f)
-      total_sum= formated_number(@pages[page_number][:total_sum].to_f)
-      non_taxable= formated_number(@pages[page_number][:non_taxable].to_f)
-
-      if @pages[page_number - 1] != nil
-        letter1 = "VIENEN"
-        p = @pages[page_number - 1]
-        bi_sum1 = formated_number(p[:bi_sum].to_f)
-        igv_sum1 = formated_number(p[:igv_sum].to_f)
-        total_sum1 = formated_number(p[:total_sum].to_f)
-        non_taxable1= formated_number(p[:non_taxable].to_f)
-        arr << [letter1, bi_sum1, igv_sum1, zero, zero, zero, zero, non_taxable1, zero, zero, total_sum1]
-      end
-      arr << [letter, bi_sum, igv_sum, zero, zero, zero, zero, non_taxable, zero, zero, total_sum]
-      table( arr, cell_style: {align: :right, borders: [], size: 5}, column_widths: [33, 35, 30, 25,25,25,25, 22, 30 ,25, 35])
+    def final_row foot_line_text, page
+      [ {content: foot_line_text, colspan: 5 },
+        make_sub_table([page[:bi_sum], page[:igv_sum]], 32),
+        make_sub_table([zero, zero], 25),
+        make_sub_table([zero, zero], 25),
+        formated_number(page[:non_taxable]),
+        zero, zero,
+        formated_number(page[:total_sum]) ]
     end
 
     def book_body
       # get total number of tickets
       length = @tickets.length
-      page_num = (length / 25.0).ceil
+      page_num = (length / 27.0).ceil
       page_num.times do |i|
         pages[i + 1] = {
           page_number: i + 1,
@@ -90,16 +66,19 @@ module Books
 
       if length > 0
         @tickets.each do |ticket|
-          data << table_body(fields, ticket, widths, aligns)
 
-          if @pages[n][:length] < 25
+          if @pages[n][:length] < 27
             page = @pages[n]
             page[:length] += 1
           else
-            page = @pages[n + 1]
+            data << final_row('VIENEN', @pages[n])
+
             n += 1
+            page = @pages[n]
             page[:length] += 1
           end
+
+          data << table_body(fields, ticket, widths, aligns)
 
           bi_sum += ticket.taxable_to_taxable_export_bi
           igv_sum += ticket.taxable_to_taxable_export_igv
@@ -109,6 +88,11 @@ module Books
           page[:igv_sum] = igv_sum.round(2)
           page[:total_sum] = total_sum.round(2)
           page[:non_taxable] = non_taxable.round(2)
+          if page[:length] == 27
+            data << final_row('VAN', page)
+          elsif @tickets.last == ticket
+            data << final_row('TOTAL', page)
+          end
         end
       else
         data << [content: 'SIN MOVIMIENTO EN EL PERIODO', colspan: 5]
@@ -122,7 +106,9 @@ module Books
 
       table(data, header: true, cell_style: {borders: [], size: 5, align: :right},
             column_widths: {0 => 22, 1 => 35, 2 => 30, 8 => 30, 10 => 30,
-                            9 => 22, 11 => 33, 12 => 33})
+                            9 => 22, 11 => 33, 12 => 33}) do
+				row(0).borders = [:bottom]
+      end
     end
   end
 end
