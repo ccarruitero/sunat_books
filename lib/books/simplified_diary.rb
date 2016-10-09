@@ -11,7 +11,7 @@ module Books
       #@book_name = self.class.name.downcase.sub("books::", "")
       #dir = File.dirname(__FILE__)
       #@blayout = YAML.load_file("#{dir}/layouts/#{@book_name}.yml")
-      counts = get_counts @tickets
+      counts = get_mother_counts @tickets
       total_sums = counts.map { |count| CountSum.new(count) }
 
       (month.to_i..12).each do |m|
@@ -20,13 +20,12 @@ module Books
         #repeat(:all) do
         #  canvas do
         bounding_box([bounds.left + 10, bounds.top - 10], width: 800) do
-          book_title "LIBRO DIARIO - FORMATO SIMPLIFICADO"
-          book_header period, @company.ruc, @company.name
+          book_header period, @company.ruc, @company.name, "LIBRO DIARIO - FORMATO SIMPLIFICADO"
         end
         #  end
         #end
 
-        bounding_box([bounds.left + 3, bounds.top - 45], width: 790, height: 510) do
+        bounding_box([bounds.left + 3, bounds.top - 45], width: 810, height: 510) do
           book_body m, year, total_sums
         end
       end
@@ -37,7 +36,8 @@ module Books
       tickets = @tickets.where(period_month: month, period_year: year)
 
       # header
-      counts = get_counts @tickets
+      # counts = get_counts @tickets
+      counts = get_mother_counts @tickets
       data << ['FECHA', 'OPERACIÓN', counts].flatten
 
       # body
@@ -52,25 +52,31 @@ module Books
           initial_data << { content: formated_number(sum.total), align: :right }
         end
       end
-      data << [Date.new(year.to_i, month.to_i, 1).to_s, 'ASIENTO INICIAL DEL PERIODO', initial_data].flatten
+      date = get_date(year.to_i, month.to_i, 1)
+      data << [date, 'ASIENTO INICIAL DEL PERIODO', initial_data].flatten
 
       if tickets.length > 0
-        # sales entry
         sales = tickets.where(operation_type: 'ventas')
-        sales_row = get_row_sums(sales, counts, total_sums)
-        data << [Date.new(year.to_i, month.to_i, -1).to_s, 'VENTAS DEL PERIODO', sales_row].flatten
+        if sales.count > 0
+          # sales entry
+          sales_row = get_row_sums(sales, counts, total_sums)
+          data << [get_date(year.to_i, month.to_i, -1), 'VENTAS DEL PERIODO', sales_row].flatten
+        end
 
-        # buys entry
         buys = tickets.where(operation_type: 'compras')
-        buys_row = get_row_sums(buys, counts, total_sums)
-        data << [Date.new(year.to_i, month.to_i, -1).to_s, 'COMPRAS DEL PERIODO', buys_row].flatten
+        if buys.count > 0
+          # buys entry
+          buys_row = get_row_sums(buys, counts, total_sums)
+          data << [get_date(year.to_i, month.to_i, -1), 'COMPRAS DEL PERIODO', buys_row].flatten
+        end
 
         # other entries
         others = tickets.where(operation_type: 'otros')
+        # others_row = get_row_sums(others, counts, total_sums)
         others.each do |ticket|
           ticket_data = []
           counts.each_with_index do |count, i|
-            if uniq_counts(ticket).include? count
+            if ticket.uniq_mother_counts.include? count
               value = get_value(ticket, count)
             else
               value = 0
@@ -78,7 +84,23 @@ module Books
             total_sums[i].add value
             ticket_data << { content: formated_number(value), align: :right }
           end
-          data << [ticket.operation_date, ticket.reference, ticket_data].flatten
+          data << [parse_day(ticket.operation_date), ticket.reference, ticket_data].flatten
+        end
+
+        # cierre entry
+        close = tickets.where(operation_type: 'cierre')
+        close.each do |ticket|
+          ticket_data = []
+          counts.each_with_index do |count, i|
+            if ticket.uniq_mother_counts.include? count
+              value = get_value(ticket, count)
+            else
+              value = 0
+            end
+            total_sums[i].add value
+            ticket_data << { content: formated_number(value), align: :right }
+          end
+          data << [parse_day(ticket.operation_date), ticket.reference, ticket_data].flatten
         end
       else
         data << [{content: 'SIN MOVIMIENTO EN EL PERIODO', colspan: 5}]
@@ -91,7 +113,8 @@ module Books
       end
       data << [{content: 'TOTALES', colspan: 2}, total_data].flatten
 
-      table(data, header: true, cell_style: {borders: [], size: 6})
+      table(data, header: true, cell_style: {borders: [], size: 5},
+      column_widths: { 1 => 55 })
     end
   end
 end

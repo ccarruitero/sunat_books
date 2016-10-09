@@ -141,18 +141,21 @@ module Books
     end
 
     # diary
-    def uniq_counts ticket
-      ticket.accounting_counts.pluck(:accounting_count_number).uniq
+    def get_counts tickets
+      arr = tickets.map { |t| t.uniq_counts }
+      arr = arr.flatten.uniq.sort
     end
 
-    def get_counts tickets
-      arr = tickets.map { |t| uniq_counts(t) }
+    def get_mother_counts tickets
+      arr = tickets.map { |t| t.uniq_mother_counts }
       arr = arr.flatten.uniq.sort
     end
 
     def get_value ticket, count
-      active_amount = ticket.get_amount_by_position(count)
-      pasive_amount = ticket.get_amount_by_position(count, false)
+      # active_amount = ticket.get_amount_by_position(count)
+      # pasive_amount = ticket.get_amount_by_position(count, false)
+      active_amount = ticket.get_amount_by_mother_count(count)
+      pasive_amount = ticket.get_amount_by_mother_count(count, false)
       # if count === '401' && ticket.operation_type == 'compras'
       #   amount = amount * (-1)
       # end
@@ -161,7 +164,7 @@ module Books
 
     def get_row_sums tickets, counts, total_sums
       # given an array of counts and tickets get sums by each count
-      row_counts = get_counts tickets
+      row_counts = get_mother_counts tickets
       count_sums = row_counts.map { |count| CountSum.new(count) }
 
       # get totals
@@ -195,6 +198,15 @@ module Books
       content_row = []
       content.each {|c| content_row << formated_number(c) }
       make_table([content_row],options)
+    end
+
+    # Utils
+    def get_date year, month, day
+      parse_day(Date.new(year.to_i, month.to_i, day))
+    end
+
+    def parse_day day
+      day.strftime("%d-%m").to_s
     end
   end
 end
