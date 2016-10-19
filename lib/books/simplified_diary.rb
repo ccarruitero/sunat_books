@@ -17,21 +17,14 @@ module Books
       (month.to_i..12).each do |m|
         start_new_page unless m == month.to_i
         period = get_period(m, year)
-        #repeat(:all) do
-        #  canvas do
-        bounding_box([bounds.left + 10, bounds.top - 10], width: 800) do
-          book_header period, @company.ruc, @company.name, "LIBRO DIARIO - FORMATO SIMPLIFICADO"
-        end
-        #  end
-        #end
 
-        bounding_box([bounds.left + 3, bounds.top - 45], width: 810, height: 510) do
-          book_body m, year, total_sums
+        bounding_box([bounds.left + 3, bounds.top - 10], width: 815, height: 510) do
+          book_body m, year, total_sums, 20, period
         end
       end
     end
 
-    def book_body month, year, total_sums
+    def book_body month, year, total_sums, max_column=nil, period=nil
       data = []
       tickets = @tickets.where(period_month: month, period_year: year)
 
@@ -113,8 +106,44 @@ module Books
       end
       data << [{content: 'TOTALES', colspan: 2}, total_data].flatten
 
-      table(data, header: true, cell_style: {borders: [], size: 5},
-      column_widths: { 1 => 55 })
+      book_header period, @company.ruc, @company.name, "LIBRO DIARIO - FORMATO SIMPLIFICADO"
+
+      if data.first.count > max_column
+        tmp0 = []
+        tmp1 = []
+
+        data.each do |column|
+          if column == data.last
+            first_page = column.first(max_column - 1)
+            tmp0 << first_page
+            next_page = [ column.first ] + (column[(max_column -1)..column.length])
+            tmp1 << next_page
+          else
+            if column.length < max_column
+              tmp0 << column
+            else
+              first_page = column.first(max_column)
+              tmp0 << first_page
+
+              # TODO: make the same for more than 2 pages
+              next_page = column.first(2) + (column[max_column..column.length])
+              tmp1 << next_page
+            end
+          end
+        end
+
+        table(tmp0, header: true, cell_style: {borders: [], size: 6},
+          column_widths: { 1 => 73 })
+        start_new_page
+        book_header period, @company.ruc, @company.name, "LIBRO DIARIO - FORMATO SIMPLIFICADO"
+        table(tmp1, header: true, cell_style: {borders: [], size: 6},
+          column_widths: { 1 => 73 })
+
+      else
+
+        table(data, header: true, cell_style: {borders: [], size: 6},
+          column_widths: { 1 => 73 })
+      end
     end
   end
 end
