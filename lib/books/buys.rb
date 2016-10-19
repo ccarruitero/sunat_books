@@ -14,6 +14,7 @@ module Books
       @book_name = self.class.name.downcase.sub("books::", "")
       dir = File.dirname(__FILE__)
       @blayout = YAML.load_file("#{dir}/layouts/#{@book_name}.yml")
+      @page_max = 27
 
       repeat(:all) do
         canvas do
@@ -67,7 +68,7 @@ module Books
       if length > 0
         @tickets.each do |ticket|
 
-          if @pages[n][:length] < 27
+          if @pages[n][:length] < @page_max
             page = @pages[n]
             page[:length] += 1
           else
@@ -75,7 +76,7 @@ module Books
 
             n += 1
             page = @pages[n]
-            page[:length] += 1
+            page[:length] += 2
           end
 
           data << table_body(fields, ticket, widths, aligns)
@@ -88,7 +89,7 @@ module Books
           page[:igv_sum] = igv_sum.round(2)
           page[:total_sum] = total_sum.round(2)
           page[:non_taxable] = non_taxable.round(2)
-          if page[:length] == 27
+          if page[:length] == @page_max && @tickets.last != ticket
             data << final_row('VAN', page)
           elsif @tickets.last == ticket
             data << final_row('TOTAL', page)

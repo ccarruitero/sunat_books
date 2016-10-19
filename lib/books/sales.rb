@@ -63,9 +63,9 @@ module Books
       if length > 0
         @tickets.each do |ticket|
 
-          if @pages[n][:length] < 29
+          if @pages[n][:length] < @page_max
             page = @pages[n]
-            page[:length] += 1
+            page[:length] += 2
           else
             data << final_row('VIENEN', @pages[n])
             page = @pages[n + 1]
@@ -81,7 +81,7 @@ module Books
           page[:bi_sum] = bi_sum.round(2)
           page[:igv_sum] = igv_sum.round(2)
           page[:total_sum] = total_sum.round(2)
-          if page[:length] == @page_max
+          if page[:length] == @page_max && @tickets.last != ticket
             data << final_row('VAN', page)
           elsif @tickets.last == ticket
             data << final_row('TOTAL', page)
