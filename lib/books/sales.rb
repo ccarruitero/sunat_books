@@ -65,12 +65,12 @@ module Books
 
           if @pages[n][:length] < @page_max
             page = @pages[n]
-            page[:length] += 2
+            page[:length] += 1
           else
             data << final_row('VIENEN', @pages[n])
             page = @pages[n + 1]
             n += 1
-            page[:length] += 1
+            page[:length] += 2
           end
 
           data << table_body(fields, ticket, widths, aligns)
