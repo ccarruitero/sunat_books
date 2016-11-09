@@ -1,0 +1,34 @@
+- period # YYYYMMDD
+- cuo # Código Unico de Operación, software (max 40)
+- correlative # 2 ..10
+- operation_date # 'dd/mm/yyyy'
+- pay_date # 'dd/mm/yyyy'
+- document_type # 2
+- document_serial # max 20
+- dua_year_emition
+- document_number # max 20
+- total_diary_operation_non_credit # max 20
+- provider_document_type
+- provider_document_number # max 15
+- provider_name # max 100
+- document_bi_export_only
+- document_igv_export_only
+- document_bi_export_n_no_tax
+- document_igv_export_n_no_tax
+- document_bi_export_non_tax
+- document_igv_export_non_tax
+- document_non_tax
+- documentn_isc
+- document_other_tax
+- document_total
+- document_exchange_rate # 1 entero, 3 decimales
+- modified_document_date
+- modified_document_type  # 2
+- modified_document_serial
+- modified_document_aduanas_dependency
+- modified_document_number
+- foreign_document_number
+- detraction_date
+- detraction_number
+- marca_document_retention # retention ? '1' : '0'
+- operation_status # current -> '0' '1', -<>?

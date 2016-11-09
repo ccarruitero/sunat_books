@@ -14,13 +14,23 @@ GEM
       i18n (~> 0.7)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+    clap (1.0.0)
+    coderay (1.1.1)
     concurrent-ruby (1.0.2)
+    cutest (1.2.3)
+      clap
     i18n (0.7.0)
+    method_source (0.8.2)
     minitest (5.9.0)
     pdf-core (0.6.1)
     prawn (2.1.0)
       pdf-core (~> 0.6.1)
       ttfunk (~> 1.4.0)
+    pry (0.10.4)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    slop (3.6.0)
     thread_safe (0.3.5)
     ttfunk (1.4.0)
     tzinfo (1.2.2)
@@ -30,6 +40,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  cutest
+  pry
   sunat_books!
 
 BUNDLED WITH
