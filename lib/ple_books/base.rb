@@ -1,8 +1,14 @@
+require 'csv'
+
 module PleBooks
   class Base
-    def ple_book_name uid, ruc, month, year
+    def ple_book_name uid, ruc, month, year, operations_state=nil, content=nil, currency=nil
       code = book_code(uid)
-      "LE#{ruc}#{year}#{month}00#{code}001111"
+      code_oportunity = '00' # TODO: case for 'inventarios y balances'
+      operations_state ||= 1 # 0, 1, 2
+      content ||= 1 # 1 ,0
+      currency ||= 1 # 1, 2
+      "LE#{ruc}#{year}#{month}00#{code}#{code_oportunity}#{operations_state}#{content}#{currency}1"
     end
 
     def book_code uid
@@ -26,6 +32,8 @@ module PleBooks
     end
 
     def get_file(tickets, fields, filename)
+      FileUtils.touch("#{filename}")
+
       tickets.each do |ticket|
         ticket_data = ""
 
