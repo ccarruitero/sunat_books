@@ -34,7 +34,7 @@ module PleBooks
     def get_file(tickets, fields, filename)
       FileUtils.touch("#{filename}")
 
-      tickets.each do |ticket|
+      tickets.each_with_index do |ticket, i|
         ticket_data = ""
 
         fields.each do |field|
@@ -46,8 +46,9 @@ module PleBooks
           ticket_data << "#{value}|"
         end
 
-        File.open("#{filename}", "w+") do |txt|
-          txt.write(ticket_data)
+        mode = (i == 0 ? "w+" : "a+")
+        File.open("#{filename}", mode) do |txt|
+          txt.puts(ticket_data)
         end
       end
     end
