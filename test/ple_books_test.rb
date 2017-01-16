@@ -69,7 +69,8 @@ scope do
         tickets = []
         field_value = SecureRandom.hex(10)
         tickets << Ticket.new(custom_field: field_value)
-        ple_buys = PleBooks::Buys.new('10293827481', tickets, 10, 2011, yml)
+        ple_buys = PleBooks::Buys.new('10293827481', tickets, 10, 2011,
+                                      {yml: yml})
         file = ple_buys.instance_variable_get('@filename')
         assert File.exists?(file)
 
@@ -78,10 +79,18 @@ scope do
       end
 
       test 'allow change individual field' do
+        tickets = []
+        tickets << Ticket.new(period: '20151000', operation_day: '20/10/2015')
+        ple_buys = PleBooks::Buys.new('10293827481', tickets, 10, 2015,
+                                      { layout: {
+                                          operation_date: 'operation_day'
+                                      }})
+        file = ple_buys.instance_variable_get('@filename')
+        assert File.exists?(file)
+
+        txt = File.read(file)
+        assert txt.include?('20/10/2015')
       end
     end
-
-    # test 'generate zip file' do
-    # end
   end
 end
