@@ -3,6 +3,14 @@ require 'ple_books/base'
 module PleBooks
   class Buys < Base
     def initialize(ruc, tickets, month, year, options={})
+      # ruc => company's ruc in string format
+      # tickets => an array of objects that respond to a layout's methods
+      # month => a number that represent a month
+      # year => a number that represent a year
+      # options =>
+      #   :yml  => to define a custom layout file
+      #   :layout => to define a custom name for a specific layout method
+
       book_name = self.class.name.downcase.sub("plebooks::", "")
       dir = File.dirname(__FILE__)
       yml_path = options[:yml] || "#{dir}/layouts/#{book_name}.yml"

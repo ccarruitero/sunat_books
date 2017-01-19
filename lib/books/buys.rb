@@ -5,6 +5,11 @@ module Books
     attr_accessor :pages
 
     def initialize(company, tickets, view, month, year)
+      # company => an object that respond to ruc and name methods
+      # tickets => an array of objects that respond to a layout's methods
+      # view => a view context
+      # month => a number that represent a month
+      # year => a number that represent a year
       super(page_layout: :landscape, margin: [5], page_size: "A4")
       @view = view
       @company = company

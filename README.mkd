@@ -1,0 +1,31 @@
+# Sunat Books
+A ruby gem for get accounting books for [SUNAT](https://www.sunat.gob.pe)
+
+## Install
+You can install via
+```
+gem install sunat_books
+```
+or by adding to your Gemfile
+```
+gem 'sunat_books'
+```
+
+## Usage
+
+```ruby
+require 'sunat_books'
+```
+
+to get a pdf format
+
+```ruby
+pdf = Books::Buys.new(company, tickets, view_context, month, year)
+pdf.render
+```
+
+to get the txt file for electronic books
+
+```ruby
+ple = PleBooks::Buys.new(ruc, tickets, month, year)
+```
