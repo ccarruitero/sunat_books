@@ -2,6 +2,8 @@ require 'csv'
 
 module PleBooks
   class Base
+    attr_accessor :file
+
     def ple_book_name uid, ruc, month, year, operations_state=nil, content=nil, currency=nil
       code = book_code(uid)
       code_oportunity = '00' # TODO: case for 'inventarios y balances'
@@ -33,6 +35,8 @@ module PleBooks
 
     def get_file(tickets, fields, filename)
       FileUtils.touch("#{filename}")
+
+      send("file=", filename)
 
       tickets.each_with_index do |ticket, i|
         ticket_data = ""

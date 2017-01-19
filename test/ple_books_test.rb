@@ -54,12 +54,12 @@ scope do
     end
 
     test 'generate txt file' do
-      assert File.exists?(@ple_buys.instance_variable_get('@filename'))
+      assert File.exists?(@ple_buys.file)
     end
 
     test 'tickets empty' do
       ple_buys = PleBooks::Buys.new('10293827481', {}, 10, 2011)
-      assert File.exists?(ple_buys.instance_variable_get('@filename'))
+      assert File.exists?(ple_buys.file)
     end
 
     scope 'custom layout' do
@@ -71,7 +71,7 @@ scope do
         tickets << Ticket.new(custom_field: field_value)
         ple_buys = PleBooks::Buys.new('10293827481', tickets, 10, 2011,
                                       {yml: yml})
-        file = ple_buys.instance_variable_get('@filename')
+        file = ple_buys.file
         assert File.exists?(file)
 
         txt = File.read(file)
@@ -85,7 +85,7 @@ scope do
                                       { layout: {
                                           operation_date: 'operation_day'
                                       }})
-        file = ple_buys.instance_variable_get('@filename')
+        file = ple_buys.file
         assert File.exists?(file)
 
         txt = File.read(file)
