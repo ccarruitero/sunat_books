@@ -1,8 +1,8 @@
-require 'ple_books/base'
+require "ple_books/base"
 
 module PleBooks
   class Buys < Base
-    def initialize(ruc, tickets, month, year, options={})
+    def initialize(ruc, tickets, month, year, options = {})
       # ruc => company's ruc in string format
       # tickets => an array of objects that respond to a layout's methods
       # month => a number that represent a month
@@ -24,7 +24,7 @@ module PleBooks
         end
       end
 
-      content = tickets.length > 0 ? 1 : 0
+      content = !tickets.empty? ? 1 : 0
 
       filename = "#{path}#{ple_book_name('8.1', ruc, month, year, nil, content)}.txt"
       get_file(tickets, fields, filename)

@@ -1,16 +1,16 @@
-require 'books/base'
-require 'books/count_sum'
+require "books/base"
+require "books/count_sum"
 
 module Books
   class SimplifiedDiary < Base
-    def initialize company, tickets, view, month, year
+    def initialize(company, tickets, view, month, year)
       super(page_layout: :landscape, margin: [5], page_size: "A4")
       @view = view
       @company = company
       @tickets = tickets
-      #@book_name = self.class.name.downcase.sub("books::", "")
-      #dir = File.dirname(__FILE__)
-      #@blayout = YAML.load_file("#{dir}/layouts/#{@book_name}.yml")
+      # @book_name = self.class.name.downcase.sub("books::", "")
+      # dir = File.dirname(__FILE__)
+      # @blayout = YAML.load_file("#{dir}/layouts/#{@book_name}.yml")
       counts = get_mother_counts @tickets
       total_sums = counts.map { |count| CountSum.new(count) }
 
@@ -24,20 +24,20 @@ module Books
       end
     end
 
-    def book_body month, year, total_sums, max_column=nil, period=nil
+    def book_body(month, year, total_sums, max_column = nil, period = nil)
       data = []
       tickets = @tickets.where(period_month: month, period_year: year)
 
       # header
       # counts = get_counts @tickets
       counts = get_mother_counts @tickets
-      data << ['FECHA', 'OPERACIÓN', counts].flatten
+      data << ["FECHA", "OPERACIÓN", counts].flatten
 
       # body
 
       # initial entry
-      initial = tickets.where(operation_type: 'inicial')
-      if initial.length > 0
+      initial = tickets.where(operation_type: "inicial")
+      if !initial.empty?
         initial_data = get_row_sums(initial, counts, total_sums)
       else
         initial_data = []
@@ -46,25 +46,25 @@ module Books
         end
       end
       date = get_date(year.to_i, month.to_i, 1)
-      data << [date, 'ASIENTO INICIAL DEL PERIODO', initial_data].flatten
+      data << [date, "ASIENTO INICIAL DEL PERIODO", initial_data].flatten
 
       if tickets.length > 0
-        sales = tickets.where(operation_type: 'ventas')
+        sales = tickets.where(operation_type: "ventas")
         if sales.count > 0
           # sales entry
           sales_row = get_row_sums(sales, counts, total_sums)
-          data << [get_date(year.to_i, month.to_i, -1), 'VENTAS DEL PERIODO', sales_row].flatten
+          data << [get_date(year.to_i, month.to_i, -1), "VENTAS DEL PERIODO", sales_row].flatten
         end
 
-        buys = tickets.where(operation_type: 'compras')
+        buys = tickets.where(operation_type: "compras")
         if buys.count > 0
           # buys entry
           buys_row = get_row_sums(buys, counts, total_sums)
-          data << [get_date(year.to_i, month.to_i, -1), 'COMPRAS DEL PERIODO', buys_row].flatten
+          data << [get_date(year.to_i, month.to_i, -1), "COMPRAS DEL PERIODO", buys_row].flatten
         end
 
         # other entries
-        others = tickets.where(operation_type: 'otros')
+        others = tickets.where(operation_type: "otros")
         # others_row = get_row_sums(others, counts, total_sums)
         others.each do |ticket|
           ticket_data = []
@@ -81,22 +81,18 @@ module Books
         end
 
         # cierre entry
-        close = tickets.where(operation_type: 'cierre')
+        close = tickets.where(operation_type: "cierre")
         close.each do |ticket|
           ticket_data = []
           counts.each_with_index do |count, i|
-            if ticket.uniq_mother_counts.include? count
-              value = get_value(ticket, count)
-            else
-              value = 0
-            end
+            value = ticket.uniq_mother_counts.include?(count) ? get_value(ticket, count) : 0
             total_sums[i].add value
             ticket_data << { content: formated_number(value), align: :right }
           end
           data << [parse_day(ticket.operation_date), ticket.reference, ticket_data].flatten
         end
       else
-        data << [{content: 'SIN MOVIMIENTO EN EL PERIODO', colspan: 5}]
+        data << [{ content: "SIN MOVIMIENTO EN EL PERIODO", colspan: 5 }]
       end
 
       # totals
@@ -104,7 +100,7 @@ module Books
       total_sums.map do |sum|
         total_data << { content: formated_number(sum.total), align: :right }
       end
-      data << [{content: 'TOTALES', colspan: 2}, total_data].flatten
+      data << [{ content: "TOTALES", colspan: 2 }, total_data].flatten
 
       book_header period, @company.ruc, @company.name, "LIBRO DIARIO - FORMATO SIMPLIFICADO"
 
@@ -116,7 +112,7 @@ module Books
           if column == data.last
             first_page = column.first(max_column - 1)
             tmp0 << first_page
-            next_page = [ column.first ] + (column[(max_column -1)..column.length])
+            next_page = [column.first] + (column[(max_column - 1)..column.length])
             tmp1 << next_page
           else
             if column.length < max_column
@@ -132,16 +128,16 @@ module Books
           end
         end
 
-        table(tmp0, header: true, cell_style: {borders: [], size: 6},
+        table(tmp0, header: true, cell_style: { borders: [], size: 6 },
           column_widths: { 1 => 73 })
         start_new_page
         book_header period, @company.ruc, @company.name, "LIBRO DIARIO - FORMATO SIMPLIFICADO"
-        table(tmp1, header: true, cell_style: {borders: [], size: 6},
+        table(tmp1, header: true, cell_style: { borders: [], size: 6 },
           column_widths: { 1 => 73 })
 
       else
 
-        table(data, header: true, cell_style: {borders: [], size: 6},
+        table(data, header: true, cell_style: { borders: [], size: 6 },
           column_widths: { 1 => 73 })
       end
     end

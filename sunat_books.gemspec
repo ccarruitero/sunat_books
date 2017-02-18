@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.description = s.summary
   s.authors = ["César Carruitero"]
   s.email = ["cesar@mozilla.pe"]
-  s.homepage = "https://github.com/ccarruitero/books"
+  s.homepage = "https://github.com/ccarruitero/sunat_books"
   s.license = "MPL"
 
   s.files = `git ls-files`.split("\n")

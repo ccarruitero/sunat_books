@@ -1,4 +1,4 @@
-require 'ple_books/base'
+require "ple_books/base"
 
 module PleBooks
   class Sales < Base

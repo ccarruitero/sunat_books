@@ -1,0 +1,13 @@
+Style/Documentation:
+  Enabled: false
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+  SupportedStyles:
+    - single_quotes
+    - double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: single_quotes
+  SupportedStyles:
+    - single_quotes
+    - double_quotes
