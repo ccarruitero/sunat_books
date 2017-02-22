@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "books/base"
 require "books/count_sum"
 
@@ -48,12 +49,13 @@ module Books
       date = get_date(year.to_i, month.to_i, 1)
       data << [date, "ASIENTO INICIAL DEL PERIODO", initial_data].flatten
 
-      if tickets.length > 0
+      if !tickets.empty?
         sales = tickets.where(operation_type: "ventas")
-        if sales.count > 0
+        if sales.count.positive?
           # sales entry
-          sales_row = get_row_sums(sales, counts, total_sums)
-          data << [get_date(year.to_i, month.to_i, -1), "VENTAS DEL PERIODO", sales_row].flatten
+          sales_sum = get_row_sums(sales, counts, total_sums)
+          sales_row = [get_date(year.to_i, month.to_i, -1), "VENTAS DEL PERIODO", sales_sum].flatten
+          data << sales_row
         end
 
         buys = tickets.where(operation_type: "compras")
@@ -111,34 +113,33 @@ module Books
         data.each do |column|
           if column == data.last
             first_page = column.first(max_column - 1)
+            second_page = (column[(max_column - 1)..column.length])
             tmp0 << first_page
-            next_page = [column.first] + (column[(max_column - 1)..column.length])
+            next_page = [column.first] + second_page
             tmp1 << next_page
-          else
-            if column.length < max_column
+          elsif column.length < max_column
               tmp0 << column
-            else
-              first_page = column.first(max_column)
-              tmp0 << first_page
+          else
+            first_page = column.first(max_column)
+            tmp0 << first_page
 
-              # TODO: make the same for more than 2 pages
-              next_page = column.first(2) + (column[max_column..column.length])
-              tmp1 << next_page
-            end
+            # TODO: make the same for more than 2 pages
+            next_page = column.first(2) + (column[max_column..column.length])
+            tmp1 << next_page
           end
         end
 
         table(tmp0, header: true, cell_style: { borders: [], size: 6 },
-          column_widths: { 1 => 73 })
+                    column_widths: { 1 => 73 })
         start_new_page
         book_header period, @company.ruc, @company.name, "LIBRO DIARIO - FORMATO SIMPLIFICADO"
         table(tmp1, header: true, cell_style: { borders: [], size: 6 },
-          column_widths: { 1 => 73 })
+                    column_widths: { 1 => 73 })
 
       else
 
         table(data, header: true, cell_style: { borders: [], size: 6 },
-          column_widths: { 1 => 73 })
+                    column_widths: { 1 => 73 })
       end
     end
   end

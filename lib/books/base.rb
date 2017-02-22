@@ -1,25 +1,19 @@
+# frozen_string_literal: true
 require "prawn"
 require "yaml"
-require "active_support/all"
+require_relative "utils"
 
 module Books
   class Base < Prawn::Document
-    include ActiveSupport::NumberHelper
-
     MONTHS = { 1 => "Enero", 2 => "Febrero", 3 => "marzo", 4 => "abril",
                5 => "mayo", 6 => "junio", 7 => "julio", 8 => "agosto",
                9 => "setiembre", 10 => "octubre", 11 => "noviembre",
                12 => "diciembre" }.freeze
 
-    def formated_number(float)
-      number_to_currency(float, unit: "")
-    end
-
     def add_align(aligns, options, key)
-      aligns.each do |a|
-        if a[key] != nil
-          options[:cell_style] = options[:cell_style].merge(align: a[key][0].to_sym)
-        end
+      cell_style = options[:cell_style]
+      aligns.map do |a|
+        cell_style.merge!(align: a[key][0].to_sym) unless a[key].nil?
       end
     end
 
@@ -33,24 +27,24 @@ module Books
       column_widths = {}
       hash.each do |key, value|
         k = I18n.t("books.#{book_name}.#{key}").mb_chars.upcase.to_s
-        v = value.collect { |s| I18n.t("books.#{book_name}.#{s}").mb_chars.upcase.to_s }
+        v = value.collect do |s|
+          I18n.t("books.#{book_name}.#{s}").mb_chars.upcase.to_s
+        end
         arr = [[{ content: k, colspan: value.length }], v]
         current_key = key
       end
 
       widths = blayout["widths"]
-      if !widths.nil?
+      unless widths
         widths.each do |w|
-          if !w[current_key].nil?
-            column_widths = w[current_key].flatten
-          end
+          column_widths = w[current_key].flatten unless w[current_key].nil?
         end
       end
       if !column_widths.empty?
         make_table(arr, cell_style: { borders: [], size: 5, align: :center },
-                   column_widths: column_widths) do
-                     cells.padding = 1
-                   end
+                        column_widths: column_widths) do
+          cells.padding = 1
+        end
       else
         make_table(arr, cell_style: { borders: [], size: 5, width: 22,
                                       padding: 1, align: :center })
@@ -106,11 +100,11 @@ module Books
             end
             options = { cell_style: { borders: [], size: 5 } }
             column_widths = nil
-            unless widths.nil?
-              widths.each do |w|
-                column_widths = w[key].flatten unless w[key].nil?
-              end
+            # unless widths.nil?
+            widths.each do |w|
+              column_widths = w[key].flatten unless w[key].nil?
             end
+            # end
             if !column_widths.nil?
               options = options.merge(column_widths: column_widths)
             else
@@ -153,48 +147,12 @@ module Books
       active_amount - pasive_amount
     end
 
-    def get_row_sums(tickets, counts, total_sums)
-      # given an array of counts and tickets get sums by each count
-      row_counts = get_mother_counts tickets
-      count_sums = row_counts.map { |count| CountSum.new(count) }
-
-      # get totals
-      tickets.each do |ticket|
-        count_sums.each do |count_sum|
-          count_sum.add get_value(ticket, count_sum.count)
-        end
-      end
-
-      # get ordered row
-      row_data = []
-      counts.each_with_index do |count, i|
-        sum_count = nil
-        count_sums.each do |count_sum|
-          sum_count = count_sum if count_sum.count == count
-        end
-
-        value = sum_count ? sum_count.total : 0
-        total_sums[i].add value
-        row_data << { content: formated_number(value), align: :right }
-      end
-      row_data
-    end
-
     def make_sub_table(content, width = nil)
       options = { cell_style: { width: width, size: 5, borders: [],
                                 align: :right } }
       content_row = []
       content.each { |c| content_row << formated_number(c) }
       make_table([content_row], options)
-    end
-
-    # Utils
-    def get_date(year, month, day)
-      parse_day(Date.new(year.to_i, month.to_i, day))
-    end
-
-    def parse_day(day)
-      day.strftime("%d-%m").to_s
     end
   end
 end

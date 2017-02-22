@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "books/base"
 
 module Books
@@ -7,36 +8,44 @@ module Books
       @view = view
       @company = company
       @period = get_period(month, year)
-      @pages = {}
       @tickets = tickets
       @book_name = self.class.name.downcase.sub("books::", "")
       dir = File.dirname(__FILE__)
       @blayout = YAML.load_file("#{dir}/layouts/#{@book_name}.yml")
       @page_max = 29
 
+      prawn_book
+    end
+
+    def prawn_header(title)
       repeat(:all) do
         canvas do
           bounding_box([bounds.left + 10, bounds.top - 10], width: 800) do
-            # book_title "REGISTRO DE VENTAS"
-            book_header @period, @company.ruc, @company.name, "REGISTRO DE VENTAS"
-          end
-        end
-      end
-
-      bounding_box([bounds.left + 3, bounds.top - 45], width: 800, height: 530) do
-        book_body
-      end
-
-      repeat(:all, dynamic: true) do
-        canvas do
-          bounding_box([235, 50], width: 700) do
-            # book_footer
+            book_header @period, @company.ruc, @company.name, title
           end
         end
       end
     end
 
-    def book_body
+    def prawn_book
+      prawn_header "REGISTRO DE VENTAS"
+
+      bounding_box([bounds.left + 3, bounds.top - 45], width: 800,
+                                                       height: 530) do
+        book_body
+      end
+
+      # repeat(:all, dynamic: true) do
+      #   canvas do
+      #     bounding_box([235, 50], width: 700) do
+      #       book_footer
+      #     end
+      #   end
+      # end
+    end
+
+    def instantiate_pages
+      @pages = {}
       length = @tickets.length
       page_num = (length / 29.0).ceil
       page_num.times do |i|
@@ -46,7 +55,10 @@ module Books
           bi_sum: BigDecimal(0)
         }
       end
+    end
 
+    def book_body
+      instantiate_pages
       move_down 5
       fields = @blayout["headers"]
       widths = @blayout["widths"]
@@ -59,7 +71,7 @@ module Books
       igv_sum = BigDecimal(0)
       total_sum = BigDecimal(0)
 
-      if length > 0
+      if length.positive?
         @tickets.each do |ticket|
           if @pages[n][:length] < @page_max
             page = @pages[n]
@@ -94,10 +106,16 @@ module Books
         page[:total_sum] = zero
       end
 
-      table(data, header: true, cell_style: { borders: [], size: 5,
-                                              align: :right },
-            column_widths: { 0 => 22, 1 => 35, 2 => 30, 5 => 27, 6 => 37,
-                             8 => 20, 9 => 33, 10 => 27, 11 => 35, 12 => 29 }) do
+      render_prawn_table(data)
+    end
+
+    def render_prawn_table(data)
+      widths_columns = { 0 => 22, 1 => 35, 2 => 30, 5 => 27, 6 => 37, 8 => 20,
+                         9 => 33, 10 => 27, 11 => 35, 12 => 29 }
+
+      table(data, header: true,
+                  cell_style: { borders: [], size: 5, align: :right },
+                  column_widths: widths_columns) do
         row(0).borders = [:bottom, :top]
       end
     end
