@@ -46,8 +46,7 @@ module Books
 
     def instantiate_pages
       @pages = {}
-      length = @tickets.length
-      page_num = (length / 29.0).ceil
+      page_num = (@tickets.length / 29.0).ceil
       page_num.times do |i|
         @pages[i + 1] = {
           page_number: i + 1,
@@ -71,7 +70,7 @@ module Books
       igv_sum = BigDecimal(0)
       total_sum = BigDecimal(0)
 
-      if length.positive?
+      if @tickets.length.positive?
         @tickets.each do |ticket|
           if @pages[n][:length] < @page_max
             page = @pages[n]

@@ -5,6 +5,8 @@ require_relative "utils"
 
 module Books
   class Base < Prawn::Document
+    include Utils
+
     MONTHS = { 1 => "Enero", 2 => "Febrero", 3 => "marzo", 4 => "abril",
                5 => "mayo", 6 => "junio", 7 => "julio", 8 => "agosto",
                9 => "setiembre", 10 => "octubre", 11 => "noviembre",
