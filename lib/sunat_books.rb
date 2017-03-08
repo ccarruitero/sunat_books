@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "books/buys"
 require "books/sales"
 require "books/simplified_diary"

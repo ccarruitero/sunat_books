@@ -3,6 +3,7 @@ require "cutest"
 require "pry"
 require_relative "../lib/sunat_books"
 require_relative "fixtures/ticket"
+require_relative "fixtures/company"
 
 def get_line(array, object)
   str = ""

@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require_relative "helper"
+require_relative "../helper"
 
 setup do
   tickets = [{}]
@@ -19,7 +19,7 @@ end
 scope "custom layout" do
   test "allow custom file for layout" do
     dir = File.dirname(__FILE__)
-    yml = "#{dir}/fixtures/custom_layout.yml"
+    yml = "#{dir}/../fixtures/custom_layout.yml"
     tickets = []
     field_value = SecureRandom.hex(10)
     tickets << Ticket.new(custom_field: field_value)

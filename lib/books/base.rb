@@ -40,6 +40,7 @@ module Books
       unless widths
         widths.each do |w|
           column_widths = w[current_key].flatten unless w[current_key].nil?
+          # ??
         end
       end
       if !column_widths.empty?
@@ -67,6 +68,16 @@ module Books
       txt "RUC: #{ruc}"
       book_title("#{title} - #{period}")
       move_down 5
+    end
+
+    def prawn_header(title, period, company)
+      repeat(:all) do
+        canvas do
+          bounding_box([bounds.left + 10, bounds.top - 10], width: 800) do
+            book_header period, company.ruc, company.name, title
+          end
+        end
+      end
     end
 
     def zero

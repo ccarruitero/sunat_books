@@ -18,18 +18,26 @@ module PleBooks
       fields = YAML.load_file(yml_path)
       check_layout(options, fields)
       content = !tickets.empty? ? 1 : 0
+      name = ple_book_name("8.1", ruc, month, year, nil, content)
 
-      filename = "#{path}#{ple_book_name('8.1', ruc, month, year, nil, content)}.txt"
+      filename = "#{path}#{name}.txt"
       get_file(tickets, fields, filename)
     end
 
     def check_layout(options, fields)
-      if options[:layout]
-        options[:layout].each do |key, value|
-          i = fields.index(key.to_s)
-          fields.delete(key.to_s)
-          fields.insert(i, value)
-        end
+      # insert_layout_fields(options, fields) unless options[:layout].nil?
+      options[:layout]&.each do |key, value|
+        i = fields.index(key.to_s)
+        fields.delete(key.to_s)
+        fields.insert(i, value)
+      end
+    end
+
+    def insert_layout_fields(options, fields)
+      options[:layout].each do |key, value|
+        i = fields.index(key.to_s)
+        fields.delete(key.to_s)
+        fields.insert(i, value)
       end
     end
   end

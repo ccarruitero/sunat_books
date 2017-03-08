@@ -17,18 +17,8 @@ module Books
       prawn_book
     end
 
-    def prawn_header(title)
-      repeat(:all) do
-        canvas do
-          bounding_box([bounds.left + 10, bounds.top - 10], width: 800) do
-            book_header @period, @company.ruc, @company.name, title
-          end
-        end
-      end
-    end
-
     def prawn_book
-      prawn_header "REGISTRO DE VENTAS"
+      prawn_header "REGISTRO DE VENTAS", @period, @company
 
       bounding_box([bounds.left + 3, bounds.top - 45], width: 800,
                                                        height: 530) do
@@ -44,20 +34,23 @@ module Books
       # end
     end
 
-    def instantiate_pages
+    def setup_pages
       @pages = {}
       page_num = (@tickets.length / 29.0).ceil
       page_num.times do |i|
         @pages[i + 1] = {
           page_number: i + 1,
           length: 0,
-          bi_sum: BigDecimal(0)
+          bi_sum: BigDecimal(0),
+          igv_sum: BigDecimal(0),
+          total_sum: BigDecimal(0),
+          non_taxable: BigDecimal(0)
         }
       end
     end
 
     def book_body
-      instantiate_pages
+      setup_pages
       move_down 5
       fields = @blayout["headers"]
       widths = @blayout["widths"]

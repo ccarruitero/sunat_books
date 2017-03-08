@@ -1,16 +1,18 @@
+# frozen_string_literal: false
 require "csv"
 
 module PleBooks
   class Base
     attr_accessor :file
 
-    def ple_book_name uid, ruc, month, year, operations_state=nil, content=nil, currency=nil
+    def ple_book_name(uid, ruc, month, year, *args)
       code = book_code(uid)
       code_oportunity = "00" # TODO: case for 'inventarios y balances'
-      operations_state ||= 1 # 0, 1, 2
-      content ||= 1 # 1 ,0
-      currency ||= 1 # 1, 2
-      "LE#{ruc}#{year}#{month}00#{code}#{code_oportunity}#{operations_state}#{content}#{currency}1"
+      operations_state = args[0] || 1 # 0, 1, 2
+      content = args[1] || 1 # 1 ,0
+      currency = args[2] || 1 # 1, 2
+      name = "LE#{ruc}#{year}#{month}00#{code}#{code_oportunity}"
+      name << "#{operations_state}#{content}#{currency}1"
     end
 
     def book_code(uid)
@@ -39,22 +41,26 @@ module PleBooks
       send("file=", filename)
 
       tickets.each_with_index do |ticket, i|
-        ticket_data = ""
-
-        fields.each do |field|
-          begin
-            value = ticket.send(field)
-          rescue
-            value = ""
-          end
-          ticket_data << "#{value}|"
-        end
+        ticket_data = get_value(fields, ticket)
 
         mode = (i.zero? ? "w+" : "a+")
         File.open(filename.to_s, mode) do |txt|
           txt.puts(ticket_data)
         end
       end
+    end
+
+    def get_value(fields, ticket)
+      data = ""
+      fields.each do |field|
+        begin
+          value = ticket.send(field)
+        rescue
+          value = ""
+        end
+        data << "#{value}|"
+      end
+      data
     end
   end
 end

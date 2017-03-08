@@ -59,7 +59,7 @@ module Books
         end
 
         buys = tickets.where(operation_type: "compras")
-        if buys.count > 0
+        if buys.count.positive?
           # buys entry
           buys_row = get_row_sums(buys, counts, total_sums)
           data << [get_date(year.to_i, month.to_i, -1), "COMPRAS DEL PERIODO", buys_row].flatten
@@ -118,7 +118,7 @@ module Books
             next_page = [column.first] + second_page
             tmp1 << next_page
           elsif column.length < max_column
-              tmp0 << column
+            tmp0 << column
           else
             first_page = column.first(max_column)
             tmp0 << first_page
