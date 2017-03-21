@@ -11,9 +11,12 @@ Gem::Specification.new do |s|
 
   s.files = `git ls-files`.split("\n")
 
-  s.add_runtime_dependency "prawn"
-  s.add_runtime_dependency "i18n"
-  s.add_runtime_dependency "activesupport"
+  s.add_runtime_dependency("prawn", "~> 2.2")
+  s.add_runtime_dependency("i18n", "~> 0.8")
+  s.add_runtime_dependency("activesupport", "~> 5.0")
 
-  s.add_development_dependency "cutest"
+  s.add_development_dependency("cutest", "~> 1.2")
+  s.add_development_dependency("pry", "~> 0.10")
+  s.add_development_dependency("rubocop", "~> 0.47")
+  s.add_development_dependency("pdf-inspector", "~> 1.2.0")
 end
