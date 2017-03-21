@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require "ple_books/base"
+require_relative "base"
 
 module PleBooks
   class Buys < Base

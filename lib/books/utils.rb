@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 require "active_support/all"
-require "books/count_sum"
+require_relative "count_sum"
 
 module Utils
   include ActiveSupport::NumberHelper

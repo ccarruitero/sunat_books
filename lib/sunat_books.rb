@@ -1,5 +1,5 @@
-# frozen_string_literal: true
-require "books/buys"
-require "books/sales"
-require "books/simplified_diary"
-require "ple_books/buys"
+# frozen_string_literal: false
+require_relative "books/buys"
+require_relative "books/sales"
+require_relative "books/simplified_diary"
+require_relative "ple_books/buys"

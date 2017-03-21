@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-require "books/base"
-require "books/count_sum"
+require_relative "base"
+require_relative "count_sum"
 
 module Books
   class SimplifiedDiary < Base
