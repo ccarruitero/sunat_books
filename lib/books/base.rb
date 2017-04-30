@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 require "prawn"
+require "prawn/table"
 require "yaml"
 require_relative "utils"
+require_relative "locale"
 
 module Books
   class Base < Prawn::Document
     include Utils
+    include Prawn::Table::Interface
 
     MONTHS = { 1 => "Enero", 2 => "Febrero", 3 => "marzo", 4 => "abril",
                5 => "mayo", 6 => "junio", 7 => "julio", 8 => "agosto",

@@ -97,12 +97,12 @@ module Books
         end
       else
         data << [content: "SIN MOVIMIENTO EN EL PERIODO", colspan: 5]
-        set_not_moviment_page
+        set_not_moviment_page(n)
       end
       render_prawn_table(data)
     end
 
-    def set_not_moviment_page
+    def set_not_moviment_page(n)
       @pages[n] = {}
       page = @pages[n]
       page[:bi_sum] = zero
