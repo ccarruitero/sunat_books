@@ -2,9 +2,10 @@ PATH
   remote: .
   specs:
     sunat_books (0.0.1)
-      activesupport (~> 5.0)
-      i18n (~> 0.8)
-      prawn (~> 2.2)
+      activesupport (> 4.1)
+      i18n (~> 0.7)
+      prawn (~> 2.0)
+      prawn-table (~> 0.2)
 
 GEM
   remote: https://rubygems.org/
@@ -22,6 +23,8 @@ GEM
     concurrent-ruby (1.0.5)
     cutest (1.2.3)
       clap
+    faker (1.7.3)
+      i18n (~> 0.5)
     hashery (2.1.2)
     i18n (0.8.1)
     method_source (0.8.2)
@@ -41,6 +44,8 @@ GEM
     prawn (2.2.2)
       pdf-core (~> 0.7.0)
       ttfunk (~> 1.5)
+    prawn-table (0.2.2)
+      prawn (>= 1.3.0, < 3.0.0)
     pry (0.10.4)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -66,6 +71,7 @@ PLATFORMS
 
 DEPENDENCIES
   cutest (~> 1.2)
+  faker (~> 1.7)
   pdf-inspector (~> 1.2.0)
   pry (~> 0.10)
   rubocop (~> 0.47)
