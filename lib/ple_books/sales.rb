@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "ple_books/base"
 
 module PleBooks

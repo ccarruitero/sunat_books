@@ -1,4 +1,5 @@
 # frozen_string_literal: false
+
 require_relative "books/buys"
 require_relative "books/sales"
 require_relative "books/simplified_diary"

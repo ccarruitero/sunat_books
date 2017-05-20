@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Books
   class CountSum
     def initialize(count_number, initial_value = BigDecimal(0))

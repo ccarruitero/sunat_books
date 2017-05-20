@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 Gem::Specification.new do |s|
   s.name = "sunat_books"
   s.version = "0.0.1"
