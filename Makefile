@@ -4,5 +4,5 @@ console:
 	irb -Ilib -rsunat_books
 
 test:
-	cutest test/*.rb test/**/*.rb
-	rubocop
+	bundle exec cutest test/*.rb test/**/*.rb
+	bundle exec rubocop
