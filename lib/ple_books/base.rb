@@ -63,5 +63,13 @@ module PleBooks
       end
       data
     end
+
+    def check_layout(options, fields)
+      options[:layout]&.each do |key, value|
+        i = fields.index(key.to_s)
+        fields.delete(key.to_s)
+        fields.insert(i, value)
+      end
+    end
   end
 end

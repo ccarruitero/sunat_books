@@ -25,15 +25,6 @@ module PleBooks
       get_file(tickets, fields, filename)
     end
 
-    def check_layout(options, fields)
-      # insert_layout_fields(options, fields) unless options[:layout].nil?
-      options[:layout]&.each do |key, value|
-        i = fields.index(key.to_s)
-        fields.delete(key.to_s)
-        fields.insert(i, value)
-      end
-    end
-
     def insert_layout_fields(options, fields)
       options[:layout].each do |key, value|
         i = fields.index(key.to_s)
