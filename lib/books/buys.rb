@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "base"
+require_relative "page"
 
 module Books
   class Buys < Base
@@ -36,27 +37,21 @@ module Books
 
     def final_row(foot_line_text, page)
       [{ content: foot_line_text, colspan: 5 },
-       make_sub_table([page[:bi_sum], page[:igv_sum]], 32),
+       make_sub_table([page.bi_sum, page.igv_sum], 32),
        make_sub_table([zero, zero], 25),
        make_sub_table([zero, zero], 25),
-       formated_number(page[:non_taxable]),
+       formated_number(page.non_taxable),
        zero, zero,
-       formated_number(page[:total_sum])]
+       formated_number(page.total_sum)]
     end
 
     def setup_pages
       @pages = []
       page_num = (@tickets.length / 27.0).ceil
       page_num.times do |i|
-        # Page.new(i + 1, 0)
-        @pages[i + 1] = {
-          page_number: i + 1,
-          length: 0,
-          bi_sum: BigDecimal(0),
-          igv_sum: BigDecimal(0),
-          total_sum: BigDecimal(0),
-          non_taxable: BigDecimal(0)
-        }
+        n_number = i + 1
+        @pages[n_number] = Books::Page.new(n_number, 0)
+        # @pages[i + 1] = Books::Page.new(i)
       end
     end
 
@@ -73,24 +68,24 @@ module Books
 
       if @tickets.length.positive?
         @tickets.each do |ticket|
-          if @pages[n][:length] < @page_max
+          if @pages[n].length < @page_max
             page = @pages[n]
-            page[:length] += 1
+            page.length += 1
           else
             data << final_row("VIENEN", @pages[n])
 
             n += 1
             page = @pages[n]
-            page[:length] += 2
+            page.length += 2
           end
 
           data << table_body(fields, ticket, widths, aligns)
 
-          page[:bi_sum] += ticket.taxable_to_taxable_export_bi.round(2)
-          page[:igv_sum] += ticket.taxable_to_taxable_export_igv.round(2)
-          page[:total_sum] += ticket.total_operation_buys.round(2)
-          page[:non_taxable] += ticket.non_taxable unless ticket.non_taxable.nil?
-          if page[:length] == @page_max && @tickets.last != ticket
+          page.bi_sum += ticket.taxable_to_taxable_export_bi.round(2)
+          page.igv_sum += ticket.taxable_to_taxable_export_igv.round(2)
+          page.total_sum += ticket.total_operation_buys.round(2)
+          page.non_taxable += ticket.non_taxable unless ticket.non_taxable.nil?
+          if page.length == @page_max && @tickets.last != ticket
             data << final_row("VAN", page)
           elsif @tickets.last == ticket
             data << final_row("TOTAL", page)
@@ -98,12 +93,12 @@ module Books
         end
       else
         data << [content: "SIN MOVIMIENTO EN EL PERIODO", colspan: 5]
-        set_not_moviment_page(n)
+        not_moviment_page(n)
       end
       render_prawn_table(data)
     end
 
-    def set_not_moviment_page(n)
+    def not_moviment_page(n)
       @pages[n] = {}
       page = @pages[n]
       page[:bi_sum] = zero
