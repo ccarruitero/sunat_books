@@ -12,7 +12,7 @@ module PleBooks
       check_layout(options, fields)
       content = !tickets.empty? ? 1 : 0
 
-      name = ple_book_name('14.2', ruc, month, year, nil, content)
+      name = ple_book_name("14.2", ruc, month, year, nil, content)
       @filename = "#{path}#{name}.txt"
       get_file(tickets, fields, @filename)
     end
