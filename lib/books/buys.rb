@@ -31,6 +31,7 @@ module Books
 
       bounding_box([bounds.left + 3, bounds.top - 45], width: 800,
                                                        height: 530) do
+        setup_pages
         book_body
       end
     end
@@ -56,55 +57,20 @@ module Books
     end
 
     def book_body
-      setup_pages
       move_down 5
-      fields = @blayout["headers"]
-      widths = @blayout["widths"]
-      aligns = @blayout["align"]
       data = []
+      fields = @blayout["headers"]
       data << table_head(fields, @book_name, @blayout)
-
-      n = 1
-
       if @tickets.length.positive?
-        @tickets.each do |ticket|
-          if @pages[n].length < @page_max
-            page = @pages[n]
-            page.length += 1
-          else
-            data << final_row("VIENEN", @pages[n])
-
-            n += 1
-            page = @pages[n]
-            page.length += 2
-          end
-
-          data << table_body(fields, ticket, widths, aligns)
-
-          page.bi_sum += ticket.taxable_to_taxable_export_bi.round(2)
-          page.igv_sum += ticket.taxable_to_taxable_export_igv.round(2)
-          page.total_sum += ticket.total_operation_buys.round(2)
-          page.non_taxable += ticket.non_taxable unless ticket.non_taxable.nil?
-          if page.length == @page_max && @tickets.last != ticket
-            data << final_row("VAN", page)
-          elsif @tickets.last == ticket
-            data << final_row("TOTAL", page)
-          end
-        end
+        row_data(data, @blayout["widths"], @blayout["align"], fields)
       else
-        data << [content: "SIN MOVIMIENTO EN EL PERIODO", colspan: 5]
-        not_moviment_page(n)
+        not_moviment_page(data)
       end
       render_prawn_table(data)
     end
 
-    def not_moviment_page(n)
-      @pages[n] = {}
-      page = @pages[n]
-      page[:bi_sum] = zero
-      page[:igv_sum] = zero
-      page[:total_sum] = zero
-      page[:non_taxable] = zero
+    def not_moviment_page(data)
+      data << [content: "SIN MOVIMIENTO EN EL PERIODO", colspan: 5]
     end
 
     def render_prawn_table(data)
@@ -112,7 +78,37 @@ module Books
                                               align: :right },
                   column_widths: { 0 => 22, 1 => 35, 2 => 30, 8 => 30,
                                    10 => 30, 9 => 22, 11 => 33, 12 => 33 }) do
-        row(0).borders = [:bottom, :top]
+        row(0).borders = %i[bottom top]
+      end
+    end
+
+    def unblocked_page(data, i)
+      last_page = @pages[i / (@page_max + 1) + 1]
+      if last_page.length < @page_max
+        last_page.length += 1
+        last_page
+      else
+        data << final_row("VIENEN", last_page)
+        new_page = @pages[last_page.page_number + 1]
+        new_page.length += 2
+        new_page
+      end
+    end
+
+    def setup_final_row_data(page, ticket, data)
+      if page.length == @page_max && @tickets.last != ticket
+        data << final_row("VAN", page)
+      elsif @tickets.last == ticket
+        data << final_row("TOTAL", page)
+      end
+    end
+
+    def row_data(data, widths, aligns, fields)
+      @tickets.each_with_index do |ticket, i|
+        page = unblocked_page(data, i)
+        data << table_body(fields, ticket, widths, aligns)
+        page.update_data(ticket)
+        setup_final_row_data(page, ticket, data)
       end
     end
   end

@@ -45,16 +45,4 @@ module Utils
     end
     row_data
   end
-
-  def get_data(arr, hash)
-    current_key = nil
-    hash.each do |key, value|
-      k = I18n.t("books.#{book_name}.#{key}").mb_chars.upcase.to_s
-      v = value.collect do |s|
-        I18n.t("books.#{book_name}.#{s}").mb_chars.upcase.to_s
-      end
-      arr = [[{ content: k, colspan: value.length }], v]
-      current_key = key
-    end
-  end
 end

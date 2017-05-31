@@ -15,6 +15,12 @@ module Books
       @non_taxable = BigDecimal(0)
     end
 
+    def update_data(ticket)
+      @bi_sum += ticket.taxable_to_taxable_export_bi.round(2)
+      @igv_sum += ticket.taxable_to_taxable_export_igv.round(2)
+      @total_sum += ticket.total_operation_buys.round(2)
+      @non_taxable += ticket.non_taxable unless ticket.non_taxable.nil?
+    end
     # def update_field()
     # end
   end
