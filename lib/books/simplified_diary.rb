@@ -3,10 +3,12 @@
 require_relative "base"
 require_relative "count_sum"
 require_relative "diary_entries"
+require_relative "diary_calculations"
 
 module Books
   class SimplifiedDiary < Base
     include DiaryEntries
+    include DiaryCalculations
     def initialize(company, tickets, view, month, year)
       super(page_layout: :landscape, margin: [5], page_size: "A4")
       @view = view
@@ -15,6 +17,9 @@ module Books
       # @book_name = self.class.name.downcase.sub("books::", "")
       # dir = File.dirname(__FILE__)
       # @blayout = YAML.load_file("#{dir}/layouts/#{@book_name}.yml")
+      @main_title = "LIBRO DIARIO - FORMATO SIMPLIFICADO"
+      @counts = get_mother_counts @tickets
+      @total_sums = @counts.map { |count| CountSum.new(count) }
 
       prawn_book(month, year)
     end
@@ -34,75 +39,51 @@ module Books
 
     def book_body(month, year, max_column = nil, period = nil)
       tickets = @tickets.where(period_month: month, period_year: year)
-      @main_title = "LIBRO DIARIO - FORMATO SIMPLIFICADO"
-      counts = get_mother_counts @tickets
-      total_sums = counts.map { |count| CountSum.new(count) }
 
       # header
       data = []
+      initial_day = get_date(year.to_i, month.to_i, 1)
+      draw_table_header(tickets, @counts, @total_sums, data, initial_day)
+
+      period_date = get_date(year, month, -1)
+      entries_data(tickets, @counts, @total_sums, data, period_date)
+
+      book_header period, @company.ruc, @company.name, @main_title
+      draw_table_body(data, max_column, period)
+    end
+
+    def not_moviment_data(data)
+      data << [{ content: "SIN MOVIMIENTO EN EL PERIODO", colspan: 5 }]
+    end
+
+    def entries_data(tickets, counts, total_sums, data, period_date)
+      return not_moviment_data(data) if tickets.empty?
+      sales_entry(tickets, counts, total_sums, data, period_date)
+      buys_entry(tickets, counts, total_sums, data, period_date)
+      other_entry(tickets, counts, total_sums, data)
+      close_entry(tickets, counts, total_sums, data)
+      total_entry(total_sums, data)
+    end
+
+    def draw_table_header(tickets, counts, total_sums, data, date)
       data << ["FECHA", "OPERACIÓN", counts].flatten
 
       # body
       initial_data = initial_entry(tickets, counts, total_sums)
-      date = get_date(year.to_i, month.to_i, 1)
       data << [date, "ASIENTO INICIAL DEL PERIODO", initial_data].flatten
+    end
 
-      if !tickets.empty?
-        period_date = get_date(year, month, -1)
-        entries_data(tickets, counts, total_sums, data, period_date)
-      else
-        data << [{ content: "SIN MOVIMIENTO EN EL PERIODO", colspan: 5 }]
-      end
+    def draw_table_body(data, max_column, period)
+      return render_prawn_table(data) unless data.first.count > max_column
+      tmp0 = []
+      tmp1 = []
 
-      total_entry(total_sums, data)
+      pages = split_data(data, max_column)
+
+      render_prawn_table(tmp0)
+      start_new_page
       book_header period, @company.ruc, @company.name, @main_title
-
-      draw_table(data, max_column, period)
-    end
-
-    def entries_data(tickets, counts, total_sums, data, period_date)
-      sales_sum = sales_entry(tickets, counts, total_sums)
-      title = "VENTAS DEL PERIODO"
-      sales_row = [period_date, title, sales_sum].flatten
-      data << sales_row
-
-      buys_entry(tickets, counts, total_sums, data, period_date)
-      other_entry(tickets, counts, total_sums, data)
-      close_entry(tickets, counts, total_sums, data)
-    end
-
-    def draw_table(data, max_column, period)
-      if data.first.count > max_column
-        tmp0 = []
-        tmp1 = []
-
-        data.each do |column|
-          if column == data.last
-            first_page = column.first(max_column - 1)
-            second_page = column[(max_column - 1)..column.length]
-            tmp0 << first_page
-            next_page = [column.first] + second_page
-            tmp1 << next_page
-          elsif column.length < max_column
-            tmp0 << column
-          else
-            first_page = column.first(max_column)
-            tmp0 << first_page
-
-            # TODO: make the same for more than 2 pages
-            next_page = column.first(2) + (column[max_column..column.length])
-            tmp1 << next_page
-          end
-        end
-
-        render_prawn_table(tmp0)
-        start_new_page
-        book_header period, @company.ruc, @company.name, @main_title
-        render_prawn_table(tmp1)
-
-      else
-        render_prawn_table(data)
-      end
+      render_prawn_table(tmp1)
     end
 
     def render_prawn_table(data)

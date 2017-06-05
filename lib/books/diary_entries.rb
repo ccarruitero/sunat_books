@@ -14,13 +14,21 @@ module DiaryEntries
     initial_data
   end
 
-  def sales_entry(tickets, counts, total_sums)
+  def buys_entry(tickets, counts, total_sums, data, period_date)
+    buys = tickets.where(operation_type: "compras")
+    title = "COMPRAS DEL PERIODO"
+    return unless buys.count.positive?
+    # buys entry
+    buys_sum = get_row_sums(buys, counts, total_sums)
+    data << [period_date, title, buys_sum].flatten
+  end
+
+  def sales_entry(tickets, counts, total_sums, data, period_date)
     sales = tickets.where(operation_type: "ventas")
-    # if sales.count.positive?
-    #   sales entry
+    title = "VENTAS DEL PERIODO"
+    return unless sales.count.positive?
     sales_sum = get_row_sums(sales, counts, total_sums)
-    # end
-    sales_sum
+    data << [period_date, title, sales_sum].flatten
   end
 
   def other_entry(tickets, counts, total_sums, data)
@@ -58,16 +66,6 @@ module DiaryEntries
       total_data << { content: formated_number(sum.total), align: :right }
     end
     data << [{ content: "TOTALES", colspan: 2 }, total_data].flatten
-  end
-
-  def buys_entry(tickets, counts, total_sums, data, period_date)
-    buys = tickets.where(operation_type: "compras")
-    title = "COMPRAS DEL PERIODO"
-    if buys.count.positive?
-      # buys entry
-      buys_row = get_row_sums(buys, counts, total_sums)
-      data << [period_date, title, buys_row].flatten
-    end
   end
 
   def mother_count?(count, ticket)
