@@ -14,7 +14,7 @@ module CsvBooks
       if options[:layout].nil?
         raise CsvBooks::OptionError.new(msg: "Layout option is required")
       end
-      filename = options[:filename] || "#{tmp_path}/book.csv"
+      filename = options[:filename] || "#{tmp_path}book.csv"
       fields = options[:layout]
       get_file(filename, fields, tickets)
     end
@@ -42,10 +42,19 @@ module CsvBooks
       tickets&.each do |ticket|
         data = []
         fields&.each do |field|
-          data << ticket.send(field)
+          data << field_value(ticket, field)
         end
         append_to_csv(filename, data, "a+")
       end
+    end
+
+    def field_value(ticket, field)
+      begin
+        value = ticket.send(field)
+      rescue
+        value = ""
+      end
+      value
     end
 
     def append_to_csv(filename, data, mode)
