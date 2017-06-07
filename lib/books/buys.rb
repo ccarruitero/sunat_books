@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require_relative "base"
-require_relative "page"
+require_relative "pages_utils"
 
 module Books
   class Buys < Base
+    include PagesUtils
+
     attr_accessor :pages
 
     def initialize(company, tickets, view, month, year)
@@ -28,10 +30,11 @@ module Books
 
     def prawn_book
       prawn_header "REGISTRO DE COMPRAS", @period, @company
+      @pages = []
 
       bounding_box([bounds.left + 3, bounds.top - 45], width: 800,
                                                        height: 530) do
-        setup_pages
+        setup_pages(@pages, @tickets.length, @page_max)
         book_body
       end
     end
@@ -44,24 +47,6 @@ module Books
        formated_number(page.non_taxable),
        zero, zero,
        formated_number(page.total_sum)]
-    end
-
-    def setup_pages
-      @pages = []
-      page_num = (@tickets.length / @page_max.to_f).ceil
-      page_num.times do |i|
-        n_number = i + 1
-        @pages[n_number] = Books::Page.new(n_number, 0)
-        # @pages[i + 1] = Books::Page.new(i)
-      end
-    end
-
-    def setup_new_page(length, last_page)
-      new_page = @pages[last_page.page_number + 1]
-      fields = %w[bi_sum igv_sum total_sum non_taxable]
-      new_page.update_fields(fields, last_page)
-      new_page.increase_length(length)
-      new_page
     end
 
     def book_body
@@ -90,18 +75,6 @@ module Books
       end
     end
 
-    def unblocked_page(data, i)
-      last_page = @pages[i / (@page_max + 1) + 1] # ?
-      if last_page.length < @page_max
-        last_page.increase_length(1)
-        last_page
-      else
-        data << final_row("VIENEN", last_page)
-        new_page = setup_new_page(2, last_page)
-        new_page
-      end
-    end
-
     def setup_final_row_data(page, ticket, data)
       if page.length == @page_max && @tickets.last != ticket
         data << final_row("VAN", page)
@@ -112,7 +85,10 @@ module Books
 
     def row_data(data, widths, aligns, fields)
       @tickets.each_with_index do |ticket, i|
-        page = unblocked_page(data, i)
+        last_page = pages[page_index(i, @page_max)]
+        page = page_not_full(last_page, @pages, @page_max) do
+          data << final_row("VIENEN", last_page)
+        end
         data << table_body(fields, ticket, widths, aligns)
         page.update_data(ticket)
         setup_final_row_data(page, ticket, data)

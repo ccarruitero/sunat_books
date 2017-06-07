@@ -33,9 +33,5 @@ module Books
         end
       end
     end
-
-    def increase_length(length = nil)
-      @length += length unless length.nil?
-    end
   end
 end
