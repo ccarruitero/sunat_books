@@ -21,7 +21,21 @@ module Books
       @total_sum += ticket.total_operation_buys.round(2)
       @non_taxable += ticket.non_taxable unless ticket.non_taxable.nil?
     end
-    # def update_field()
-    # end
+
+    def update_fields(fields = nil, source = nil)
+      # update fields from a given source
+      return if source.nil?
+      fields&.each do |field|
+        begin
+          send("#{field}=", source.send(field))
+        rescue
+          return nil
+        end
+      end
+    end
+
+    def increase_length(length = nil)
+      @length += length unless length.nil?
+    end
   end
 end

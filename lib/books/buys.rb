@@ -48,12 +48,20 @@ module Books
 
     def setup_pages
       @pages = []
-      page_num = (@tickets.length / 27.0).ceil
+      page_num = (@tickets.length / @page_max.to_f).ceil
       page_num.times do |i|
         n_number = i + 1
         @pages[n_number] = Books::Page.new(n_number, 0)
         # @pages[i + 1] = Books::Page.new(i)
       end
+    end
+
+    def setup_new_page(length, last_page)
+      new_page = @pages[last_page.page_number + 1]
+      fields = %w[bi_sum igv_sum total_sum non_taxable]
+      new_page.update_fields(fields, last_page)
+      new_page.increase_length(length)
+      new_page
     end
 
     def book_body
@@ -83,14 +91,13 @@ module Books
     end
 
     def unblocked_page(data, i)
-      last_page = @pages[i / (@page_max + 1) + 1]
+      last_page = @pages[i / (@page_max + 1) + 1] # ?
       if last_page.length < @page_max
-        last_page.length += 1
+        last_page.increase_length(1)
         last_page
       else
         data << final_row("VIENEN", last_page)
-        new_page = @pages[last_page.page_number + 1]
-        new_page.length += 2
+        new_page = setup_new_page(2, last_page)
         new_page
       end
     end
