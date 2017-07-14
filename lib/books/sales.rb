@@ -1,10 +1,18 @@
 # frozen_string_literal: true
 
 require_relative "base"
+require_relative "pages_utils"
 
 module Books
   class Sales < Base
+    include PagesUtils
+
     def initialize(company, tickets, view, month, year)
+      # company => an object that respond to ruc and name methods
+      # tickets => an array of objects that respond to a layout's methods
+      # view => a view context
+      # month => a number that represent a month
+      # year => a number that represent a year
       super(page_layout: :landscape, margin: [5], page_size: "A4")
       @view = view
       @company = company
@@ -20,83 +28,25 @@ module Books
 
     def prawn_book
       prawn_header "REGISTRO DE VENTAS", @period, @company
+      @pages = []
 
       bounding_box([bounds.left + 3, bounds.top - 45], width: 800,
                                                        height: 530) do
+        setup_pages(@pages, @tickets.length, @page_max)
         book_body
-      end
-
-      # repeat(:all, dynamic: true) do
-      #   canvas do
-      #     bounding_box([235, 50], width: 700) do
-      #       book_footer
-      #     end
-      #   end
-      # end
-    end
-
-    def setup_pages
-      @pages = {}
-      page_num = (@tickets.length / 29.0).ceil
-      page_num.times do |i|
-        @pages[i + 1] = {
-          page_number: i + 1,
-          length: 0,
-          bi_sum: BigDecimal(0),
-          igv_sum: BigDecimal(0),
-          total_sum: BigDecimal(0),
-          non_taxable: BigDecimal(0)
-        }
       end
     end
 
     def book_body
-      setup_pages
       move_down 5
-      fields = @blayout["headers"]
-      widths = @blayout["widths"]
-      aligns = @blayout["align"]
       data = []
+      fields = @blayout["headers"]
       data << table_head(fields, @book_name, @blayout)
 
-      n = 1
-      bi_sum = BigDecimal(0)
-      igv_sum = BigDecimal(0)
-      total_sum = BigDecimal(0)
-
       if @tickets.length.positive?
-        @tickets.each do |ticket|
-          if @pages[n][:length] < @page_max
-            page = @pages[n]
-            page[:length] += 1
-          else
-            data << final_row("VIENEN", @pages[n])
-            page = @pages[n + 1]
-            n += 1
-            page[:length] += 2
-          end
-
-          data << table_body(fields, ticket, widths, aligns)
-
-          bi_sum += ticket.taxable_bi
-          igv_sum += ticket.igv
-          total_sum += ticket.total_operation_sales
-          page[:bi_sum] = bi_sum.round(2)
-          page[:igv_sum] = igv_sum.round(2)
-          page[:total_sum] = total_sum.round(2)
-          if page[:length] == @page_max && @tickets.last != ticket
-            data << final_row("VAN", page)
-          elsif @tickets.last == ticket
-            data << final_row("TOTAL", page)
-          end
-        end
+        row_data(data, @blayout["widths"], @blayout["align"], fields, "sales")
       else
-        data << [content: "SIN MOVIMIENTO EN EL PERIODO", colspan: 5]
-        @pages[n] = {}
-        page = @pages[n]
-        page[:bi_sum] = zero
-        page[:igv_sum] = zero
-        page[:total_sum] = zero
+        not_moviment_page(data)
       end
 
       render_prawn_table(data)
@@ -109,15 +59,15 @@ module Books
       table(data, header: true,
                   cell_style: { borders: [], size: 5, align: :right },
                   column_widths: widths_columns) do
-        row(0).borders = [:bottom, :top]
+        row(0).borders = %i[bottom top]
       end
     end
 
     def final_row(foot_line_text, page)
       [{ content: foot_line_text, colspan: 5 }, zero,
-       formated_number(page[:bi_sum]), make_sub_table([zero, zero], 22), zero,
-       formated_number(page[:igv_sum]), zero,
-       formated_number(page[:total_sum])]
+       formated_number(page.bi_sum), make_sub_table([zero, zero], 22), zero,
+       formated_number(page.igv_sum), zero,
+       formated_number(page.total_sum)]
     end
   end
 end

@@ -7,8 +7,6 @@ module Books
   class Buys < Base
     include PagesUtils
 
-    attr_accessor :pages
-
     def initialize(company, tickets, view, month, year)
       # company => an object that respond to ruc and name methods
       # tickets => an array of objects that respond to a layout's methods
@@ -55,15 +53,11 @@ module Books
       fields = @blayout["headers"]
       data << table_head(fields, @book_name, @blayout)
       if @tickets.length.positive?
-        row_data(data, @blayout["widths"], @blayout["align"], fields)
+        row_data(data, @blayout["widths"], @blayout["align"], fields, "buys")
       else
         not_moviment_page(data)
       end
       render_prawn_table(data)
-    end
-
-    def not_moviment_page(data)
-      data << [content: "SIN MOVIMIENTO EN EL PERIODO", colspan: 5]
     end
 
     def render_prawn_table(data)
@@ -72,26 +66,6 @@ module Books
                   column_widths: { 0 => 22, 1 => 35, 2 => 30, 8 => 30,
                                    10 => 30, 9 => 22, 11 => 33, 12 => 33 }) do
         row(0).borders = %i[bottom top]
-      end
-    end
-
-    def setup_final_row_data(page, ticket, data)
-      if page.length == @page_max && @tickets.last != ticket
-        data << final_row("VAN", page)
-      elsif @tickets.last == ticket
-        data << final_row("TOTAL", page)
-      end
-    end
-
-    def row_data(data, widths, aligns, fields)
-      @tickets.each_with_index do |ticket, i|
-        last_page = pages[page_index(i, @page_max)]
-        page = page_not_full(last_page, @pages, @page_max) do
-          data << final_row("VIENEN", last_page)
-        end
-        data << table_body(fields, ticket, widths, aligns)
-        page.update_data(ticket)
-        setup_final_row_data(page, ticket, data)
       end
     end
   end

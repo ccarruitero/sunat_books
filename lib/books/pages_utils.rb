@@ -35,6 +35,30 @@ module PagesUtils
     i.zero? ? 1 : (i / page_max.to_f).ceil
   end
 
+  def not_moviment_page(data)
+    data << [content: "SIN MOVIMIENTO EN EL PERIODO", colspan: 5]
+  end
+
+  def setup_final_row_data(page, ticket, data)
+    if page.length == @page_max && @tickets.last != ticket
+      data << final_row("VAN", page)
+    elsif @tickets.last == ticket
+      data << final_row("TOTAL", page)
+    end
+  end
+
+  def row_data(data, widths, aligns, fields, operation)
+    @tickets.each_with_index do |ticket, i|
+      last_page = @pages[page_index(i, @page_max)]
+      page = page_not_full(last_page, @pages, @page_max) do
+        data << final_row("VIENEN", last_page)
+      end
+      data << table_body(fields, ticket, widths, aligns)
+      page.send("update_data_#{operation}", ticket)
+      setup_final_row_data(page, ticket, data)
+    end
+  end
+
   # for diary
   def split_data(data, max_column)
     # split rows data in pages according max_column
