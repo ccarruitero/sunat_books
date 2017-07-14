@@ -75,15 +75,18 @@ module Books
 
     def draw_table_body(data, max_column, period)
       return render_prawn_table(data) unless data.first.count > max_column
-      tmp0 = []
-      tmp1 = []
 
       pages = split_data(data, max_column)
 
-      render_prawn_table(tmp0)
+      pages.each do |page|
+        prawn_new_page(period) unless page.page_number.zero?
+        render_prawn_table(page.data)
+      end
+    end
+
+    def prawn_new_page(period)
       start_new_page
       book_header period, @company.ruc, @company.name, @main_title
-      render_prawn_table(tmp1)
     end
 
     def render_prawn_table(data)

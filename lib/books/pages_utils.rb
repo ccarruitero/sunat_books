@@ -14,9 +14,10 @@ module PagesUtils
     end
   end
 
-  def setup_pages(pages, length, page_max)
-    page_num = (length / page_max.to_f).ceil
-    (1..page_num).each do |i|
+  def setup_pages(pages, length, page_max, index = 1)
+    pages_num = (length / page_max.to_f).ceil
+    last_index = index.zero? ? pages_num - 1 : pages_num
+    (index..last_index).each do |i|
       pages[i] = Books::Page.new(i, 0)
     end
   end

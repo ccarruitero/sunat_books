@@ -9,7 +9,7 @@ include PagesUtils
 test "#setup_pages generate new pages to fill all elements" do
   pages = []
   setup_pages(pages, 20, 10)
-  # since array index is used to match page position, and is same as
+  # since array index is used to match page position for buys, and is same as
   # page_number, we have an extra index
   assert_equal pages.count, 3
 
@@ -20,6 +20,12 @@ test "#setup_pages generate new pages to fill all elements" do
   other = []
   setup_pages(other, 29, 27)
   assert_equal other.count, 3
+end
+
+test "#setup_pages generate new pages without extra page" do
+  pages = []
+  setup_pages(pages, 20, 10, 0)
+  assert_equal pages.count, 2
 end
 
 test "#setup_new_page copy page sums into current page" do
