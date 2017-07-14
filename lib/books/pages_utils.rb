@@ -34,4 +34,28 @@ module PagesUtils
   def page_index(i, page_max)
     i.zero? ? 1 : (i / page_max.to_f).ceil
   end
+
+  # for diary
+  def split_data(data, max_column)
+    # split rows data in pages according max_column
+    pages = []
+    setup_pages(pages, data.first.count, max_column, 0)
+    data&.each_with_index do |row, i|
+      if i == data.length - 1
+        setup_row_pages(pages, row, max_column - 1, 1)
+      else
+        setup_row_pages(pages, row, max_column)
+      end
+    end
+    pages
+  end
+
+  def setup_row_pages(pages, row, max_column, first_rows = 2)
+    initial_rows = row.first(first_rows)
+    batches_length = max_column - first_rows
+    left_data = row[first_rows..row.length].in_groups_of(batches_length, false)
+    pages.each_with_index do |page, i|
+      page.data << (initial_rows + left_data[i])
+    end
+  end
 end

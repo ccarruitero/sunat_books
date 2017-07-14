@@ -3,12 +3,12 @@
 require_relative "base"
 require_relative "count_sum"
 require_relative "diary_entries"
-require_relative "diary_calculations"
+require_relative "pages_utils"
 
 module Books
   class SimplifiedDiary < Base
     include DiaryEntries
-    include DiaryCalculations
+    include PagesUtils
     def initialize(company, tickets, view, month, year)
       super(page_layout: :landscape, margin: [5], page_size: "A4")
       @view = view

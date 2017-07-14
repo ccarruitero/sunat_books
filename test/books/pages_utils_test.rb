@@ -43,3 +43,36 @@ test "#page_index should get a page index according index and page_max" do
   assert_equal page_index(20, 7), 3
   assert_equal page_index(0, 7), 1
 end
+
+test "#split_data, separates data in groups according max_column desired" do
+  row = []
+  (1..29).map { row << "foo" }
+  pages = split_data([row], 20)
+  assert_equal pages.class, Array
+  assert_equal pages.count, 2
+  assert_equal pages[0].data.first.count, 19
+  assert_equal pages[1].data.first.count, 11
+end
+
+test "#split_data, split data for more than one array" do
+  data = []
+  (1..3).map do
+    row = []
+    (1..29).map { row << "foo" }
+    data << row
+  end
+  pages = split_data(data, 20)
+  assert_equal pages.count, 2
+  assert_equal pages[0].data.last.count, 19
+  assert_equal pages[1].data.last.count, 11
+  assert_equal pages[0].data.first.count, 20
+  assert_equal pages[1].data.first.count, 11
+end
+
+test "#split_data, split in more than 2 arrays" do
+  row = []
+  (1..49).map { row << "foo" }
+  pages = split_data([row], 20)
+  assert_equal pages.count, 3
+  assert pages[2].data.count.positive?
+end
