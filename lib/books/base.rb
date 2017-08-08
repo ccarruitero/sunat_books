@@ -11,26 +11,8 @@ module Books
     include Utils
     include Prawn::Table::Interface
 
-    MONTHS = { 1 => "Enero", 2 => "Febrero", 3 => "marzo", 4 => "abril",
-               5 => "mayo", 6 => "junio", 7 => "julio", 8 => "agosto",
-               9 => "setiembre", 10 => "octubre", 11 => "noviembre",
-               12 => "diciembre" }.freeze
-
-    def add_align(aligns, options, key)
-      cell_style = options[:cell_style]
-      aligns.map do |a|
-        cell_style.merge!(align: a[key][0].to_sym) unless a[key].nil?
-      end
-    end
-
-    def txt(txt)
-      text txt, size: 8
-    end
-
     def sub_head(hash, book_name, blayout)
-      arr = nil
-      current_key = nil
-      column_widths = {}
+      arr, current_key = nil
       hash.each do |key, value|
         k = I18n.t("books.#{book_name}.#{key}").mb_chars.upcase.to_s
         v = value.collect do |s|
@@ -40,26 +22,21 @@ module Books
         current_key = key
       end
 
-      widths = blayout["widths"]
-      unless widths
-        widths.each do |w|
-          column_widths = w[current_key].flatten unless w[current_key].nil?
-          # ??
-        end
-      end
-      if !column_widths.empty?
-        make_table(arr, cell_style: { borders: [], size: 5, align: :center },
-                        column_widths: column_widths) do
-          cells.padding = 1
-        end
-      else
-        make_table(arr, cell_style: { borders: [], size: 5, width: 22,
-                                      padding: 1, align: :center })
-      end
+      sub_head_table(blayout["widths"], arr, current_key)
     end
 
-    def get_period(month, year)
-      "#{MONTHS[month.to_i].upcase} #{year}"
+    def sub_head_table(widths, arr, key)
+      column_widths = get_column_widths(widths, key)
+      options = sub_head_options(column_widths)
+      make_table(arr, options)
+    end
+
+    def sub_head_options(column_widths)
+      options = { cell_style: {
+        borders: [], size: 5, align: :center, padding: 1
+      } }
+      add_widths(column_widths, options, 22)
+      options
     end
 
     def book_title(title)
@@ -84,10 +61,6 @@ module Books
       end
     end
 
-    def zero
-      formated_number(0)
-    end
-
     def table_head(fields, book_name, layout)
       thead = []
       fields.each do |h|
@@ -104,44 +77,28 @@ module Books
     def table_body(fields, ticket, widths, aligns)
       tbody = []
       fields.each do |f|
-        if f.class == Hash
-          f.each do |key, value|
-            v = value.collect do |s|
-              begin
-                value = ticket.send(s)
-                value = formated_number(value) if value.class == BigDecimal
-              rescue
-                value = ""
-              end
-              value
-            end
-            options = { cell_style: { borders: [], size: 5 } }
-            column_widths = nil
-            # unless widths.nil?
-            widths.each do |w|
-              column_widths = w[key].flatten unless w[key].nil?
-            end
-            # end
-            if !column_widths.nil?
-              options = options.merge(column_widths: column_widths)
-            else
-              options[:cell_style] = options[:cell_style].merge(width: 28)
-            end
-            add_align(aligns, options, key) unless aligns.nil?
-            arr = make_table([v], options)
-            tbody << arr
-          end
+        if f.is_a? Hash
+          table_hash(f, ticket, tbody, widths, aligns)
         else
-          begin
-            value = ticket.send(f)
-          rescue
-            value = ""
-          end
-          value = formated_number(value) if value.class == BigDecimal
-          tbody << value
+          tbody << field_value(ticket, f)
         end
       end
       tbody
+    end
+
+    def table_hash(f, ticket, tbody, widths, aligns)
+      options = { cell_style: { borders: [], size: 5 } }
+
+      f.each do |key, value|
+        v = value.collect do |s|
+          value = field_value(ticket, s)
+        end
+
+        column_widths = get_column_widths(widths, key)
+        add_widths(column_widths, options, 28)
+        add_align(aligns, options, key) unless aligns.nil?
+        tbody << make_table([v], options)
+      end
     end
 
     # diary

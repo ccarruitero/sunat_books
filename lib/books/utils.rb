@@ -6,6 +6,11 @@ require_relative "count_sum"
 module Utils
   include ActiveSupport::NumberHelper
 
+  MONTHS = { 1 => "Enero", 2 => "Febrero", 3 => "marzo", 4 => "abril",
+             5 => "mayo", 6 => "junio", 7 => "julio", 8 => "agosto",
+             9 => "setiembre", 10 => "octubre", 11 => "noviembre",
+             12 => "diciembre" }.freeze
+
   def formated_number(float)
     number_to_currency(float, unit: "")
   end
@@ -14,8 +19,53 @@ module Utils
     parse_day(Date.new(year.to_i, month.to_i, day))
   end
 
+  def get_period(month, year)
+    "#{MONTHS[month.to_i].upcase} #{year}"
+  end
+
   def parse_day(day)
     day.strftime("%d-%m").to_s
+  end
+
+  def add_align(aligns, options, key)
+    cell_style = options[:cell_style]
+    aligns.map do |a|
+      cell_style.merge!(align: a[key][0].to_sym) unless a[key].nil?
+    end
+  end
+
+  def add_widths(column_widths, options, width)
+    if column_widths.empty?
+      options[:cell_style][:width] = width
+    else
+      options.merge!(column_widths: column_widths)
+    end
+  end
+
+  def get_column_widths(widths, key)
+    obj = {}
+    widths&.each do |w|
+      obj = w[key].flatten unless w[key].nil?
+    end
+    obj
+  end
+
+  def txt(txt)
+    text txt, size: 8
+  end
+
+  def zero
+    formated_number(0)
+  end
+
+  def field_value(ticket, field)
+    begin
+      value = ticket.send(field)
+      value = formated_number(value) if value.class == BigDecimal
+    rescue
+      value = ""
+    end
+    value
   end
 
   def sum_count(count_sums, count)
