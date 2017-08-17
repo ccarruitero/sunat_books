@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sunat_books (0.0.1)
+    sunat_books (0.0.2)
       activesupport (> 4.1)
       i18n (~> 0.7)
       prawn (~> 2.0)
