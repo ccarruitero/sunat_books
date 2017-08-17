@@ -1,5 +1,8 @@
 # Sunat Books
-A ruby gem for get accounting books for [SUNAT](https://www.sunat.gob.pe)
+[![Gem Version][rubygems-image]][rubygems-url]
+[![Build Status][travis-image]][travis-url]
+
+> A ruby gem for get accounting books for [SUNAT](https://www.sunat.gob.pe)
 
 ## Install
 You can install via
@@ -29,3 +32,8 @@ to get the txt file for electronic books
 ```ruby
 ple = PleBooks::Buys.new(ruc, tickets, month, year)
 ```
+
+[rubygems-image]: https://badge.fury.io/rb/sunat_books.svg
+[rubygems-url]: https://badge.fury.io/rb/sunat_books
+[travis-image]: https://travis-ci.org/ccarruitero/sunat_books.svg?branch=master
+[travis-url]: https://travis-ci.org/ccarruitero/sunat_books
