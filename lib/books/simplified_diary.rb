@@ -9,9 +9,8 @@ module Books
   class SimplifiedDiary < Base
     include DiaryEntries
     include PagesUtils
-    def initialize(company, tickets, view, month, year)
+    def initialize(company, tickets, month, year)
       super(page_layout: :landscape, margin: [5], page_size: "A4")
-      @view = view
       @company = company
       @tickets = tickets
       # @book_name = self.class.name.downcase.sub("books::", "")
