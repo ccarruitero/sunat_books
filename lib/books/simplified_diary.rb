@@ -13,9 +13,6 @@ module Books
       super(page_layout: :landscape, margin: [5], page_size: "A4")
       @company = company
       @tickets = tickets
-      # @book_name = self.class.name.downcase.sub("books::", "")
-      # dir = File.dirname(__FILE__)
-      # @blayout = YAML.load_file("#{dir}/layouts/#{@book_name}.yml")
       @main_title = "LIBRO DIARIO - FORMATO SIMPLIFICADO"
       @counts = get_mother_counts @tickets
       @total_sums = @counts.map { |count| CountSum.new(count) }
@@ -67,7 +64,6 @@ module Books
     def draw_table_header(tickets, counts, total_sums, data, date)
       data << ["FECHA", "OPERACIÓN", counts].flatten
 
-      # body
       initial_data = initial_entry(tickets, counts, total_sums)
       data << [date, "ASIENTO INICIAL DEL PERIODO", initial_data].flatten
     end

@@ -18,7 +18,6 @@ module DiaryEntries
     buys = tickets.where(operation_type: "compras")
     title = "COMPRAS DEL PERIODO"
     return unless buys.count.positive?
-    # buys entry
     buys_sum = get_row_sums(buys, counts, total_sums)
     data << [period_date, title, buys_sum].flatten
   end
@@ -32,7 +31,6 @@ module DiaryEntries
   end
 
   def other_entry(tickets, counts, total_sums, data)
-    # other entries
     others = tickets.where(operation_type: "otros")
     # others_row = get_row_sums(others, counts, total_sums)
     others&.each do |ticket|
