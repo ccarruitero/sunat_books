@@ -2,3 +2,4 @@
 tmp
 *.gem
 *.csv
+Gemfile.lock
