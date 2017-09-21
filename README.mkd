@@ -2,6 +2,7 @@
 [![Gem Version][rubygems-image]][rubygems-url]
 [![Build Status][travis-image]][travis-url]
 [![Code Climate][code-climate-image]][code-climate-url]
+[![Dependency Status][gemnasium-image]][gemnasium-url]
 
 > A ruby gem to get accounting books for [SUNAT](https://www.sunat.gob.pe)
 
@@ -40,3 +41,5 @@ ple = PleBooks::Buys.new(ruc, tickets, month, year)
 [travis-url]: https://travis-ci.org/ccarruitero/sunat_books
 [code-climate-image]: https://codeclimate.com/github/ccarruitero/sunat_books/badges/gpa.svg
 [code-climate-url]: https://codeclimate.com/github/ccarruitero/sunat_books
+[gemnasium-image]: https://gemnasium.com/ccarruitero/sunat_books.png
+[gemnasium-url]: https://gemnasium.com/ccarruitero/sunat_books
