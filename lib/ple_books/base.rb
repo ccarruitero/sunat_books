@@ -1,9 +1,12 @@
 # frozen_string_literal: false
 
 require "csv"
+require_relative "../common_utils"
 
 module PleBooks
   class Base
+    include SunatBooks::CommonUtils
+
     attr_accessor :file
 
     def ple_book_name(uid, ruc, month, year, *args)
@@ -54,11 +57,7 @@ module PleBooks
     def get_value(fields, ticket)
       data = ""
       fields.each do |field|
-        begin
-          value = ticket.send(field)
-        rescue
-          value = ""
-        end
+        value = available_value?(ticket, field)
         data << "#{value}|"
       end
       data

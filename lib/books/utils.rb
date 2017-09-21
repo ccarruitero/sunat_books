@@ -2,9 +2,11 @@
 
 require "active_support/all"
 require_relative "count_sum"
+require_relative "../common_utils"
 
 module Utils
   include ActiveSupport::NumberHelper
+  include SunatBooks::CommonUtils
 
   MONTHS = { 1 => "Enero", 2 => "Febrero", 3 => "marzo", 4 => "abril",
              5 => "mayo", 6 => "junio", 7 => "julio", 8 => "agosto",
@@ -59,12 +61,8 @@ module Utils
   end
 
   def field_value(ticket, field)
-    begin
-      value = ticket.send(field)
-      value = formated_number(value) if value.class == BigDecimal
-    rescue
-      value = ""
-    end
+    value = available_value?(ticket, field)
+    value = formated_number(value) if value.class == BigDecimal
     value
   end
 

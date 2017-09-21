@@ -16,7 +16,7 @@ end
 
 test "#update_fields should handle if undefined method" do
   other_page = Books::Page.new(2, 1)
-  assert_equal @page.update_fields([:foo], other_page), nil
+  @page.update_fields([:foo], other_page)
 
   other_page.bi_sum += BigDecimal(10)
   @page.update_fields([:bi_sum], other_page)

@@ -32,6 +32,12 @@ test "#add_widths set cell width in options" do
   assert opt[:cell_style][:width] == 15
 end
 
+test "#field_value return a value for a given attribute" do
+  ticket = Ticket.new(foo: "bar")
+  assert_equal field_value(ticket, "foo"), "bar"
+  assert_equal field_value(ticket, "bar"), ""
+end
+
 test "#sum_count" do
 end
 

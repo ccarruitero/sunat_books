@@ -2,9 +2,12 @@
 
 require "csv"
 require_relative "option_error"
+require_relative "../common_utils"
 
 module CsvBooks
   class Base
+    include SunatBooks::CommonUtils
+
     attr_accessor :file
 
     def initialize(tickets, options = {})
@@ -42,19 +45,10 @@ module CsvBooks
       tickets&.each do |ticket|
         data = []
         fields&.each do |field|
-          data << field_value(ticket, field)
+          data << available_value?(ticket, field)
         end
         append_to_csv(filename, data, "a+")
       end
-    end
-
-    def field_value(ticket, field)
-      begin
-        value = ticket.send(field)
-      rescue
-        value = ""
-      end
-      value
     end
 
     def append_to_csv(filename, data, mode)

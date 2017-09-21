@@ -33,12 +33,14 @@ module Books
       # update fields from a given source
       return if source.nil?
       fields&.each do |field|
-        begin
-          send("#{field}=", source.send(field))
-        rescue
-          return nil
-        end
+        send("#{field}=", source.send(field)) if available?(field, source)
       end
+    end
+
+    private
+
+    def available?(field, source)
+      respond_to?("#{field}=") && source.respond_to?(field)
     end
   end
 end
