@@ -17,6 +17,11 @@ test "render pdf, have a parseable pdf" do
   assert page_counter.pages.size == 1
 end
 
+test "@book_name instance variable is correct" do
+  book = Books::Buys.new(@company, [], 2, 3015)
+  assert_equal book.instance_variable_get("@book_name"), "buys"
+end
+
 test "have correct text in header" do
   tickets = []
   pdf = Books::Buys.new(@company, tickets, 2, 3015)
