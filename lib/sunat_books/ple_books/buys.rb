@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "base"
+require "sunat_books/ple_books/base"
 
 module PleBooks
   class Buys < Base

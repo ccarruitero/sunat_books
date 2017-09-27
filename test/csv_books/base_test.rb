@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../helper"
-require_relative "../../lib/csv_books/option_error"
+require "sunat_books/csv_books/option_error"
 
 setup do
   @tickets = []

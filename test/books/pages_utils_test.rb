@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require_relative "../helper"
-require_relative "../../lib/books/pages_utils"
-require_relative "../../lib/books/page"
+require "sunat_books/books/pages_utils"
+require "sunat_books/books/page"
 
 include PagesUtils
 

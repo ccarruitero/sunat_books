@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../helper"
-require_relative "../../lib/books/page"
+require "sunat_books/books/page"
 
 setup do
   @page = Books::Page.new(1, 1)

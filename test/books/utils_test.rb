@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../helper"
-require_relative "../../lib/books/utils"
+require "sunat_books/books/utils"
 
 include Utils
 
