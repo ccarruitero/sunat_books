@@ -3,7 +3,7 @@
 require_relative "helper"
 
 setup do
-  @base = PleBooks::Base.new
+  @base = SunatBooks::Ple::Base.new
 end
 
 test "book_code" do
