@@ -6,6 +6,36 @@ require "sunat_books/books/page"
 
 include PagesUtils
 
+test "#page_not_full return a page" do
+  pages = []
+  setup_pages(pages, 20, 5)
+  first = pages.at(1)
+  page = page_not_full(first, pages, 20)
+  assert_equal page.class, Books::Page
+end
+
+test "#page_not_full return last page when length is less than page_max" do
+  pages = []
+  setup_pages(pages, 20, 5)
+  first_page = pages.at(1)
+  page = page_not_full(first_page, pages, 5)
+  assert_equal page, first_page
+end
+
+test "#page_not_full return new page when last page is full" do
+  pages = []
+  setup_pages(pages, 20, 5)
+  first_page = pages.at(1)
+  first_page.length += 5
+  current_page = pages.at(2)
+  page = page_not_full(first_page, pages, 5)
+  assert_equal page, current_page
+  assert_equal page.page_number, 2
+end
+
+test "#row_data prepare data that will be include in table's rows" do
+end
+
 test "#setup_pages generate new pages to fill all elements" do
   pages = []
   setup_pages(pages, 20, 10)
