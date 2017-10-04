@@ -90,7 +90,7 @@ module DiaryEntries
   def get_row_sums(tickets, counts, total_sums)
     # given an array of counts and tickets get sums by each count
     row_counts = get_mother_counts tickets
-    count_sums = row_counts.map { |count| Books::CountSum.new(count) }
+    count_sums = row_counts.map { |count| SunatBooks::Pdf::CountSum.new(count) }
 
     calculate_totals(tickets, count_sums)
     # get ordered row

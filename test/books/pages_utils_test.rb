@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require_relative "../helper"
-require "sunat_books/books/pages_utils"
-require "sunat_books/books/page"
+require "sunat_books/pdf/pages_utils"
+require "sunat_books/pdf/page"
 
 include PagesUtils
 
@@ -11,7 +11,7 @@ test "#page_not_full return a page" do
   setup_pages(pages, 20, 5)
   first = pages.at(1)
   page = page_not_full(first, pages, 20)
-  assert_equal page.class, Books::Page
+  assert_equal page.class, SunatBooks::Pdf::Page
 end
 
 test "#page_not_full return last page when length is less than page_max" do

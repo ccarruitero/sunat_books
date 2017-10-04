@@ -18,7 +18,7 @@ module PagesUtils
     pages_num = (length / page_max.to_f).ceil
     last_index = index.zero? ? pages_num - 1 : pages_num
     (index..last_index).each do |i|
-      pages[i] = Books::Page.new(i, 0)
+      pages[i] = SunatBooks::Pdf::Page.new(i, 0)
     end
   end
 
