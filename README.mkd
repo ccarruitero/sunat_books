@@ -25,14 +25,14 @@ require 'sunat_books'
 to get a pdf format
 
 ```ruby
-pdf = Books::Buys.new(company, tickets, view_context, month, year)
+pdf = SunatBooks::Pdf::Buys.new(company, tickets, month, year)
 pdf.render
 ```
 
 to get the txt file for electronic books
 
 ```ruby
-ple = PleBooks::Buys.new(ruc, tickets, month, year)
+ple = SunatBooks::Ple::Buys.new(ruc, tickets, month, year)
 ```
 
 [rubygems-image]: https://badge.fury.io/rb/sunat_books.svg
