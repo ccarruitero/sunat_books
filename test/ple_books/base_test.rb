@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "helper"
+require_relative "../helper"
 
 setup do
   @base = SunatBooks::Ple::Base.new

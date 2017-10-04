@@ -1,18 +1,20 @@
 # frozen_string_literal: true
 
 require_relative "../helper"
-require "sunat_books/csv_books/option_error"
+require "sunat_books/csv/option_error"
 
 setup do
   @tickets = []
   5.times do
     @tickets << Ticket.new(field: SecureRandom.hex(10))
   end
-  @base = CsvBooks::Base.new(@tickets, layout: ["field"])
+  @base = SunatBooks::Csv::Base.new(@tickets, layout: ["field"])
 end
 
 test "require a layout array" do
-  assert_raise(CsvBooks::OptionError) { CsvBooks::Base.new(@tickets) }
+  assert_raise(SunatBooks::Csv::OptionError) do
+    SunatBooks::Csv::Base.new(@tickets)
+  end
 end
 
 test "should generate csv" do
@@ -20,13 +22,14 @@ test "should generate csv" do
 end
 
 test "should allow set custom filename" do
-  custom_file = CsvBooks::Base.new(@tickets, layout: [], filename: "name.csv")
+  options = { layout: [], filename: "name.csv" }
+  custom_file = SunatBooks::Csv::Base.new(@tickets, options)
   assert custom_file.file.include?("name.csv")
   assert File.exist?(custom_file.file)
 end
 
 test "should handle undefined layout method" do
-  undefined_method = CsvBooks::Base.new(@tickets, layout: %w[field bar])
+  undefined_method = SunatBooks::Csv::Base.new(@tickets, layout: %w[field bar])
   assert File.exist?(undefined_method.file)
 end
 
