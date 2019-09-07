@@ -18,6 +18,7 @@ module SunatBooks
         if options[:layout].nil?
           raise SunatBooks::Csv::OptionError, "Layout option is required"
         end
+
         filename = options[:filename] || "#{tmp_path}book.csv"
         fields = options[:layout]
         get_file(filename, fields, tickets)
@@ -54,6 +55,7 @@ module SunatBooks
 
       def append_to_csv(filename, data, mode)
         return if data.nil?
+
         CSV.open(filename, mode) do |csv|
           csv << data
         end

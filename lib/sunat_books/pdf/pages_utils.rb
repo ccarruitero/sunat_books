@@ -24,6 +24,7 @@ module PagesUtils
 
   def setup_new_page(pages, last_page, length)
     return if last_page.page_number == pages.count
+
     new_page = pages[last_page.page_number + 1]
     fields = %w[bi_sum igv_sum total_sum non_taxable]
     new_page.update_fields(fields, last_page)
@@ -31,8 +32,8 @@ module PagesUtils
     new_page
   end
 
-  def page_index(i, page_max)
-    i.zero? ? 1 : (i / page_max.to_f).ceil
+  def page_index(index, page_max)
+    index.zero? ? 1 : (index / page_max.to_f).ceil
   end
 
   def not_moviment_page(data)

@@ -33,6 +33,7 @@ module SunatBooks
       def update_fields(fields = nil, source = nil)
         # update fields from a given source
         return if source.nil?
+
         fields&.each do |field|
           send("#{field}=", source.send(field)) if available?(field, source)
         end

@@ -18,6 +18,7 @@ module DiaryEntries
     buys = tickets.where(operation_type: "compras")
     title = "COMPRAS DEL PERIODO"
     return unless buys.count.positive?
+
     buys_sum = get_row_sums(buys, counts, total_sums)
     data << [period_date, title, buys_sum].flatten
   end
@@ -26,6 +27,7 @@ module DiaryEntries
     sales = tickets.where(operation_type: "ventas")
     title = "VENTAS DEL PERIODO"
     return unless sales.count.positive?
+
     sales_sum = get_row_sums(sales, counts, total_sums)
     data << [period_date, title, sales_sum].flatten
   end
@@ -103,8 +105,8 @@ module DiaryEntries
     row_data
   end
 
-  def increase_value(row_data, total_sums, i, value)
-    total_sums[i].add value
+  def increase_value(row_data, total_sums, index, value)
+    total_sums[index].add value
     row_data << { content: formated_number(value), align: :right }
   end
 end

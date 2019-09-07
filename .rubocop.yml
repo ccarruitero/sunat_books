@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.6
 Style/Documentation:
   Enabled: false
 Style/StringLiterals:
@@ -13,3 +13,7 @@ Style/StringLiteralsInInterpolation:
   SupportedStyles:
     - single_quotes
     - double_quotes
+
+Style/MixinUsage:
+  Exclude:
+    - 'test/**/*'

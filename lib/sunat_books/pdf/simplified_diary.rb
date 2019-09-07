@@ -55,6 +55,7 @@ module SunatBooks
 
       def entries_data(tickets, counts, total_sums, data, period_date)
         return not_moviment_data(data) if tickets.empty?
+
         sales_entry(tickets, counts, total_sums, data, period_date)
         buys_entry(tickets, counts, total_sums, data, period_date)
         other_entry(tickets, counts, total_sums, data)

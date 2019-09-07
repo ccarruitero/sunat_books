@@ -87,10 +87,10 @@ module SunatBooks
         tbody
       end
 
-      def table_hash(f, ticket, tbody, widths, aligns)
+      def table_hash(field, ticket, tbody, widths, aligns)
         options = { cell_style: { borders: [], size: 5 } }
 
-        f.each do |key, value|
+        field.each do |key, value|
           v = value.collect do |s|
             value = field_value(ticket, s)
           end
