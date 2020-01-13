@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("prawn-table", "~> 0.2")
 
   s.add_development_dependency("cutest", "~> 1.2")
-  s.add_development_dependency("faker", "~> 1.7")
+  s.add_development_dependency("faker", "~> 2.2")
   s.add_development_dependency("pdf-inspector", "~> 1.2.0")
   s.add_development_dependency("pry", "~> 0.10")
   s.add_development_dependency("rubocop", "~> 0.48")
