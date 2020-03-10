@@ -3,7 +3,8 @@
 require_relative "../helper"
 
 setup do
-  @company = Company.new(ruc: Faker::Number.number(11), name: Faker::Name.name)
+  @company = Company.new(ruc: Faker::Number.number(digits: 11),
+                         name: Faker::Name.name)
 end
 
 test "render pdf, have a parseable pdf" do
