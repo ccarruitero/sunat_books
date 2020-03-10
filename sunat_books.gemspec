@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency("cutest", "~> 1.2")
   s.add_development_dependency("faker", "~> 2.2")
-  s.add_development_dependency("pdf-inspector", "~> 1.2.0")
+  s.add_development_dependency("pdf-inspector", "~> 1.3.0")
   s.add_development_dependency("pry", "~> 0.10")
   s.add_development_dependency("rubocop", "~> 0.48")
 end
