@@ -17,3 +17,12 @@ Style/StringLiteralsInInterpolation:
 Style/MixinUsage:
   Exclude:
     - 'test/**/*'
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
