@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = "sunat_books"
-  s.version = "0.0.3"
+  s.version = "0.0.4"
   s.summary = "A ruby gem to get accounting books for SUNAT"
   s.description = s.summary
   s.authors = ["César Carruitero"]
