@@ -9,6 +9,7 @@ module SunatBooks
       include SunatBooks::CommonUtils
 
       attr_accessor :file
+      attr_reader :book_format
 
       def ple_book_name(uid, ruc, month, year, *args)
         code = book_code(uid)
