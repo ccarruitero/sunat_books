@@ -31,8 +31,13 @@ pdf.render
 to get the txt file for electronic books
 
 ```ruby
-ple = SunatBooks::Ple::Buys.new(ruc, tickets, month, year)
+ple = SunatBooks::Ple::Buys.new(ruc, tickets, month, year, options)
 ```
+
+Currently allowed options are:
+yml: path location to a custom layout file
+layout: a hash to define method names to replace in layout
+book_format: book format to use
 
 [rubygems-image]: https://badge.fury.io/rb/sunat_books.svg
 [rubygems-url]: https://badge.fury.io/rb/sunat_books
