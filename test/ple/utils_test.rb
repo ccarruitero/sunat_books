@@ -2,8 +2,15 @@
 
 require_relative "../helper"
 
+class TestPle
+  include SunatBooks::Ple::Utils
+  include SunatBooks::CommonUtils
+
+  attr_accessor :file
+end
+
 setup do
-  @base = SunatBooks::Ple::Base.new
+  @base = TestPle.new
 end
 
 test "book_code" do
