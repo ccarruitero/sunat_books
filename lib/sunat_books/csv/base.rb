@@ -15,9 +15,7 @@ module SunatBooks
         # options
         # - layout => Array of strings used to get data for csv
         # - filename
-        if options[:layout].nil?
-          raise SunatBooks::Csv::OptionError, "Layout option is required"
-        end
+        raise SunatBooks::Csv::OptionError, "Layout option is required" if options[:layout].nil?
 
         filename = options[:filename] || "#{tmp_path}book.csv"
         fields = options[:layout]
