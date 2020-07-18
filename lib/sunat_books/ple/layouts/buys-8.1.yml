@@ -21,14 +21,21 @@
 - documentn_isc
 - document_other_tax
 - document_total
-- document_exchange_rate # 1 entero, 3 decimales
+- currency_code
+- exchange_rate # 1 entero, 3 decimales
 - modified_document_date
 - modified_document_type  # 2
 - modified_document_serial
 - modified_document_aduanas_dependency
 - modified_document_number
-- foreign_document_number
 - detraction_date
 - detraction_number
-- marca_document_retention # retention ? '1' : '0'
-- operation_status # current -> '0' '1', -<>?
+- apply_retention? # retention ? '1'
+- clasification_goods_services_adquired
+- contract_or_project
+- inconsistent_exchange
+- inconsistent_provider_inactive
+- inconsistent_provider_igv_exoneration
+- inconsistent_dni_buy_liquidation
+- payment_method
+- anotation_oportunity

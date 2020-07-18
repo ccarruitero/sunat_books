@@ -2,19 +2,19 @@
 
 require_relative "../helper"
 
-setup do
+def ple_buys(opts = {})
   tickets = [{}]
   ruc = "102392839213"
-  @ple_buys = SunatBooks::Ple::Buys.new(ruc, tickets, 10, 2013)
+  SunatBooks::Ple::Buys.new(ruc, tickets, 10, 2013, opts)
 end
 
 test "generate txt file" do
-  assert File.exist?(@ple_buys.file)
+  assert File.exist?(ple_buys.file)
 end
 
 test "tickets empty" do
-  ple_buys = SunatBooks::Ple::Buys.new("10293827481", {}, 10, 2011)
-  assert File.exist?(ple_buys.file)
+  ple = SunatBooks::Ple::Buys.new("10293827481", {}, 10, 2011)
+  assert File.exist?(ple.file)
 end
 
 scope "custom layout" do
@@ -45,5 +45,15 @@ scope "custom layout" do
 
     txt = File.read(file)
     assert txt.include?("20/10/2015")
+  end
+end
+
+scope "book_format" do
+  test "without book_format option" do
+    assert_equal ple_buys.book_format, "8.1"
+  end
+
+  test "with book_format option" do
+    assert_equal ple_buys(book_format: "8.2").book_format, "8.2"
   end
 end
