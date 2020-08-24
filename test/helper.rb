@@ -13,7 +13,7 @@ require "pdf/inspector"
 
 def get_line(array, object)
   str = ""
-  array.each { |f| str += object.send(f.to_s) + "|" }
+  array.each { |f| str += "#{object.send(f.to_s)}|" }
   str
 end
 

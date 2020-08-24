@@ -1,5 +1,6 @@
 AllCops:
   TargetRubyVersion: 2.6
+  NewCops: enable
 Style/Documentation:
   Enabled: false
 Style/StringLiterals:
@@ -26,3 +27,6 @@ Style/HashTransformKeys:
 
 Style/HashTransformValues:
   Enabled: true
+
+Lint/MissingSuper:
+  Enabled: false

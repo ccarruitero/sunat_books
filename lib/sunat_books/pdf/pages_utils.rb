@@ -9,8 +9,7 @@ module PagesUtils
       last_page
     else
       yield if block
-      new_page = setup_new_page(pages, last_page, 2)
-      new_page
+      setup_new_page(pages, last_page, 2)
     end
   end
 
@@ -37,7 +36,7 @@ module PagesUtils
   end
 
   def not_moviment_page(data)
-    data << [content: "SIN MOVIMIENTO EN EL PERIODO", colspan: 5]
+    data << [{ content: "SIN MOVIMIENTO EN EL PERIODO", colspan: 5 }]
   end
 
   def setup_final_row_data(page, ticket, data)
