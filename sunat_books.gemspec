@@ -23,5 +23,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency("pry", "~> 0.10")
   s.add_development_dependency("rubocop", "~> 0.48")
 
-  s.required_ruby_version = ">= 2.6.0"
+  s.required_ruby_version = ">= 2.5.0"
 end
