@@ -65,7 +65,7 @@ module SunatBooks
       def table_head(fields, book_name, layout)
         thead = []
         fields.each do |h|
-          if h.class == Hash
+          if h.instance_of? Hash
             r = sub_head(h, book_name, layout)
             thead << r
           else
