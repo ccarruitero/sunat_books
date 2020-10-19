@@ -62,7 +62,7 @@ module Utils
 
   def field_value(ticket, field)
     value = available_value?(ticket, field)
-    value = formated_number(value) if value.class == BigDecimal
+    value = formated_number(value) if value.instance_of? BigDecimal
     value
   end
 
