@@ -2,7 +2,7 @@
 - cuo
 - correlative
 - operation_date
-- pay_date
+- payment_date
 - document_type
 - document_serial
 - document_number
@@ -10,10 +10,10 @@
 - provider_document_type
 - provider_document_number
 - provider_name
-- document_bi
-- document_igv
-- document_other_concept
-- document_total
+- bi
+- igv
+- other_concept
+- total_operation
 - currency_code
 - exchange_rate
 - modified_document_date
@@ -23,9 +23,9 @@
 - detraction_date
 - detraction_number
 - apply_retention?
-- clasification_goods_services_adquired
-- inconsistent_exchange
-- inconsistent_provider_inactive
-- inconsistent_provider_igv_exoneration
+- adquired_clasification
+- exchange_rate_error
+- provider_inactive_error
+- provider_exoneration_error
 - payment_method
 - anotation_oportunity

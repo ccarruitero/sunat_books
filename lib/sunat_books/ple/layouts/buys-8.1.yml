@@ -2,25 +2,25 @@
 - cuo # Código Unico de Operación, software (max 40)
 - correlative # 2 ..10
 - operation_date # 'dd/mm/yyyy'
-- pay_date # 'dd/mm/yyyy'
+- payment_date # 'dd/mm/yyyy'
 - document_type # 2
 - document_serial # max 20
-- dua_year_emition
+- dua_year
 - document_number # max 20
 - total_diary_operation_non_credit # max 20
 - provider_document_type
 - provider_document_number # max 15
 - provider_name # max 100
-- document_bi_export_only
-- document_igv_export_only
-- document_bi_export_n_no_tax
-- document_igv_export_n_no_tax
-- document_bi_export_non_tax
-- document_igv_export_non_tax
-- document_non_tax
-- documentn_isc
-- document_other_tax
-- document_total
+- bi_exported_only
+- igv_exported_only
+- bi_exported_non_taxable
+- igv_exported_non_taxable
+- bi_non_taxable_only
+- igv_non_taxable_only
+- non_taxable
+- isc_tax
+- other_tax
+- total_operation
 - currency_code
 - exchange_rate # 1 entero, 3 decimales
 - modified_document_date
@@ -31,11 +31,11 @@
 - detraction_date
 - detraction_number
 - apply_retention? # retention ? '1'
-- clasification_goods_services_adquired
-- contract_or_project
-- inconsistent_exchange
-- inconsistent_provider_inactive
-- inconsistent_provider_igv_exoneration
-- inconsistent_dni_buy_liquidation
+- adquired_clasification
+- contract_uid
+- exchange_rate_error
+- provider_inactive_error
+- provider_exoneration_error
+- provider_document_number_error # dni en liquidaciones compra
 - payment_method
 - anotation_oportunity
