@@ -2,7 +2,7 @@
 - cuo
 - correlative
 - operation_date
-- pay_date
+- payment_date
 - document_type
 - document_serial
 - initial_document_number
@@ -10,8 +10,8 @@
 - client_document_type
 - client_document_number
 - client_name
-- bi_exported_operation
-- bi_taxable_operation
+- bi_exported
+- bi_taxable
 - bi_discount
 - igv_tax
 - igv_discount
@@ -24,10 +24,11 @@
 - total_operation
 - currency_code
 - exchange_rate
-- original_document_date
-- original_document_type
-- original_document_serial
-- original_document_number
+- modified_document_date
+- modified_document_type
+- modified_document_serial
+- modified_document_number
 - contract_uid
-- payment_way
+- exchange_rate_error
+- payment_method
 - anotation_oportunity
