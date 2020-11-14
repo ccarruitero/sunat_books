@@ -24,6 +24,8 @@ module SunatBooks
       def initialize(ruc, tickets, month, year, options = {})
         @book_format = options[:book_format]
         yml_path = options[:yml] || default_yml(book_format)
+        raise SunatBooks::Errors::InvalidLayoutError unless File.exist?(yml_path)
+
         fields = YAML.load_file(yml_path)
         check_layout(options, fields)
         content = !tickets.empty? ? 1 : 0
