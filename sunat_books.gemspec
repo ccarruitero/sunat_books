@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency("faker", "~> 2.2")
   s.add_development_dependency("pdf-inspector", "~> 1.3.0")
   s.add_development_dependency("pry", "~> 0.10")
-  s.add_development_dependency("rubocop", "~> 0.48")
+  s.add_development_dependency("rubocop", "~> 1.13")
 
   s.required_ruby_version = ">= 2.5.0"
 end
